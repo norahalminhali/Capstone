@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>RIDERS</h2>
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="{% url 'main:home_view' %}" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="{% url 'main:contact_view' %}" class="nav-link">Contact</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link">Login <i class="fa-solid fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" class="dropdown-link"><i class="fa-solid fa-user-plus"></i> Sign Up</a></li>
+                            <li><a href="#" class="dropdown-link"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer class="footer-box w-100">
+    <div class="footer-inner">
+
+        <div class="footer-col">
+            <p class="footer-title">RIDERS </p>
+            <div class="footer-icons">
+                <a href="#"><i class="fa-brands fa-whatsapp fa-lg"></i></a>
+                <a href="#"><i class="fa-solid fa-envelope fa-lg"></i></a>
+                <a href="#"><i class="fa-brands fa-x fa-lg"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <p class="footer-topic">Contact</p>
+            <p class="footer-link">WhatsApp</p>
+            <p class="footer-link">Email</p>
+        </div>
+
+        <div class="footer-col">
+            <p class="footer-topic">Why Us?</p>
+            <p class="footer-link">Fast Service</p>
+            <p class="footer-link">Safe Drivers</p>
+        </div>
+
+        <div class="footer-col">
+            <p class="footer-topic">Legal</p>
+            <p class="footer-link">Terms & Conditions</p>
+            <p class="footer-link">Privacy Policy</p>
+    </div>
+</footer>
+
+
+
+</body>
+</html>
