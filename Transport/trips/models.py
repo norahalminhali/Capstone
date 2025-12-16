@@ -1,0 +1,26 @@
+from django.db import models
+from main.models import City, Neighborhood, Day
+
+# Create your models here.
+class Trip (models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('APPROVED', 'Approved'),
+        ('REJECTED', 'Rejected'),
+    ]
+
+    start_date = models.DateField()
+    end_date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    city = models.ManyToManyField(City)
+    start_neighborhood = models.ManyToManyField(Neighborhood, related_name="trip_starts")
+    end_neighborhood = models.ManyToManyField(Neighborhood, related_name="trip_ends")
+    days_of_week = models.ManyToManyField(Day)
+    total_riders = models.PositiveIntegerField()
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    is_private = models.BooleanField(default=False)
+    creadted_at = models.DateTimeField(auto_now_add=True)
+    admin_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    rider_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    reject_Comment = models.TextField()

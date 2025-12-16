@@ -25,5 +25,6 @@ urlpatterns = [
     path('drivers/',include("drivers.urls")),
     path('riders/',include("riders.urls")),
     path('accounts/',include("accounts.urls")),
+    path('trips/',include("trips.urls")),
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
