@@ -4,7 +4,7 @@ from .models import Driver
 class DriverForm(forms.ModelForm):
     class Meta:
         model = Driver
-        exclude = ['user', 'status']  # استثناء user و status 
+        exclude = ['user', 'status', 'cities']  # استثناء user و status و cities (يتم معالجتها يدوياً)
         
         # Labels
         labels = {
@@ -13,7 +13,6 @@ class DriverForm(forms.ModelForm):
             'gender': 'Gender',
             'avatar': 'Profile Picture',
             'date_of_birth': 'Date of Birth',
-            'cities': 'Cities',
             'licenses': 'Driving License',
             'car_registration': 'Car Registration (Istimara)',
             'car': 'Car',
