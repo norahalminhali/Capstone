@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'riders',
     'accounts',
     'trips',
+    'rider_request',
 ]
 
 MIDDLEWARE = [
