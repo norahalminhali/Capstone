@@ -126,11 +126,23 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="cities" class="form-label">Cities</label>
-                            <input type="text" class="form-control" id="cities" name="cities" 
-                                   placeholder="Enter your cities (e.g., Riyadh, Jeddah)">
-                            <small class="form-text text-muted">You can enter multiple cities separated by commas</small>
+                            <label for="id_city" class="form-label">City *</label>
+                            <select class="form-select" id="id_city" name="city" required>
+                                <option value="">Select your city</option>
+                                {% for city in cities %}
+                                    <option value="{{ city.id }}">{{ city.name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>                       
+                            <div class="mb-3">
+                                <label for="id_nationality" class="form-label">Nationality *</label>
+                                {{ form.nationality }}
+                            </div>
+                            <div class="mb-4">
+                                <label for="id_licenses" class="form-label">Driving License *</label>
+                                <input type="file" class="form-control" id="id_licenses" name="licenses" accept="image/*" required>
+                                <small class="text-muted">Upload a photo of your driving license (Required)</small>
+                            </div>
                         <div class="mb-4">
                             <label for="car_registration" class="form-label">Car Registration (Istimara) 🚗 *</label>
                             <input type="file" class="form-control" id="car_registration" name="car_registration" accept="image/*" required>

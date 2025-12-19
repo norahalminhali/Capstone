@@ -1,0 +1,164 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block title %}Edit Driver Profile{% endblock %}
+
+{% block content %}
+<div class="tp-profile-page">
+    <div class="tp-shell">
+        <div class="tp-inner">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    
+                    <div class="tp-header mb-4">
+                        <div>
+                            <div class="tp-header-title">
+                                <i class="fa-solid fa-pen me-2"></i>Edit Profile
+                            </div>
+                            <p class="text-muted mb-0">Update your driver information</p>
+                        </div>
+                        <div>
+                            <a href="{% url 'accounts:profile_driver' %}" class="btn btn-sm btn-secondary">
+                                <i class="fa-solid fa-arrow-left me-1"></i> Back to Profile
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="tp-card">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <h6 class="tp-card-title mb-3">Personal Information</h6>
+
+                            <div class="mb-3">
+                                <label class="form-label">Phone Number</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                    <div class="text-danger small">{{ form.phone.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">National ID / Iqama</label>
+                                {{ form.national_id_or_iqama }}
+                                {% if form.national_id_or_iqama.errors %}
+                                    <div class="text-danger small">{{ form.national_id_or_iqama.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Gender</label>
+                                    {{ form.gender }}
+                                    {% if form.gender.errors %}
+                                        <div class="text-danger small">{{ form.gender.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Date of Birth</label>
+                                    {{ form.date_of_birth }}
+                                    {% if form.date_of_birth.errors %}
+                                        <div class="text-danger small">{{ form.date_of_birth.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">City</label>
+                                    {{ form.city }}
+                                    {% if form.city.errors %}
+                                        <div class="text-danger small">{{ form.city.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Nationality</label>
+                                    {{ form.nationality }}
+                                    {% if form.nationality.errors %}
+                                        <div class="text-danger small">{{ form.nationality.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h6 class="tp-card-title mb-3">Profile Picture & Documents</h6>
+
+                            <div class="mb-3">
+                                <label class="form-label">Avatar</label>
+                                {% if driver.avatar and driver.avatar.url != '/media/images/avatars/avatar.webp' %}
+                                    <div class="mb-2">
+                                        <img src="{{ driver.avatar.url }}" alt="Current Avatar" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                        <small class="d-block text-muted">Current avatar</small>
+                                    </div>
+                                {% endif %}
+                                {{ form.avatar }}
+                                <small class="text-muted">Upload new avatar (optional)</small>
+                                {% if form.avatar.errors %}
+                                    <div class="text-danger small">{{ form.avatar.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Driving License</label>
+                                {% if driver.licenses %}
+                                    <div class="mb-2">
+                                        <a href="{{ driver.licenses.url }}" target="_blank">
+                                            <img src="{{ driver.licenses.url }}" alt="Current License" class="tp-image-preview">
+                                        </a>
+                                        <small class="d-block text-muted">Current license</small>
+                                    </div>
+                                {% endif %}
+                                {{ form.licenses }}
+                                <small class="text-muted">Upload new license (optional)</small>
+                                {% if form.licenses.errors %}
+                                    <div class="text-danger small">{{ form.licenses.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Car Registration (Istimara)</label>
+                                {% if driver.car_registration %}
+                                    <div class="mb-2">
+                                        <a href="{{ driver.car_registration.url }}" target="_blank">
+                                            <img src="{{ driver.car_registration.url }}" alt="Current Registration" class="tp-image-preview">
+                                        </a>
+                                        <small class="d-block text-muted">Current registration</small>
+                                    </div>
+                                {% endif %}
+                                {{ form.car_registration }}
+                                <small class="text-muted">Upload new registration (optional)</small>
+                                {% if form.car_registration.errors %}
+                                    <div class="text-danger small">{{ form.car_registration.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fa-solid fa-save me-2"></i>Save Changes
+                                </button>
+                                <a href="{% url 'accounts:profile_driver' %}" class="btn btn-outline-secondary">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

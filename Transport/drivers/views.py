@@ -19,7 +19,7 @@ def driver_car_view(request):
             if not car:
                 driver.car = new_car
                 driver.save()
-            return redirect("drivers:driver_car")
+            return redirect("accounts:profile_driver")
     else:
         #يخلي البيانات تظهر
         form = CarForm(instance=car)

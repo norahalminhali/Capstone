@@ -12,45 +12,60 @@
     <div class="tp-shell">
         <div class="tp-inner">
             <div class="row g-4">
-
                 <!-- Sidebar -->
                 <div class="col-lg-4">
-                    <div class="tp-sidebar text-center d-flex flex-column align-items-center">
+                    <div class="tp-sidebar d-flex flex-column align-items-center justify-content-center" style="text-align:center; background: #f8f9fa; border-radius: 18px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); padding: 32px 18px 28px 18px; min-height: 480px;">
 
-                        <div class="tp-avatar mb-3">
+                        <div class="tp-avatar mb-3" style="box-shadow: 0 4px 18px rgba(0,0,0,0.10); border-radius: 50%; background: #fff; padding: 8px; margin-bottom: 18px;">
                             {% if driver.avatar and driver.avatar.url != '/media/images/avatars/avatar.webp' %}
-                            <img src="{{ driver.avatar.url }}" alt="Driver Avatar">
+                                <img src="{{ driver.avatar.url }}" alt="Driver Avatar" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #f2c235;">
                             {% else %}
-                            <i class="fa-solid fa-user fa-3x text-muted"></i>
+                                <i class="fa-solid fa-user fa-4x text-muted" style="margin-bottom: 10px;"></i>
                             {% endif %}
                         </div>
 
-                        <div class="tp-name">
+
+                        <div class="tp-name" style="font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; color: #474341; letter-spacing: 0.5px;">
                             {{ driver.user.first_name }} {{ driver.user.last_name }}
                         </div>
 
-                        <div class="tp-username mt-1">
+                        <div class="tp-username" style="font-size: 1.08rem; color: #7c7c7c; margin-bottom: 10px;">
                             @{{ driver.user.username }}
                         </div>
 
-                        <p class="tp-bio mt-3 mb-2">
-                            {% if driver.phone %}
-                            📱 {{ driver.phone }}<br>
-                            {% endif %}
-                            {% if driver.gender %}
-                            {{ driver.get_gender_display }}
-                            {% endif %}
-                        </p>
-
-                        <div class="tp-email mb-3">
-                            {% if driver.user.email %}
-                            <a href="mailto:{{ driver.user.email }}" target="_blank">
-                                {{ driver.user.email }}
-                            </a>
+                        <div class="tp-rating mb-3" style="font-size: 1.15rem; color: #f2c235;">
+                            {% if driver.rating %}
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= driver.rating %}
+                                        <i class="fa-solid fa-star"></i>
+                                    {% else %}
+                                        <i class="fa-regular fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span style="color: #474341; font-size: 1.05rem; margin-left: 6px;">{{ driver.rating }}/5</span>
+                            {% else %}
+                                <span style="color: #aaa;">No rating</span>
                             {% endif %}
                         </div>
 
-                        <span class="tp-badge {% if driver.status == 'PENDING' %}pending{% elif driver.status == 'APPROVED' %}approved{% elif driver.status == 'REJECTED' %}rejected{% endif %}">
+                        <div class="tp-info-list w-100" style="font-size: 1.13rem; margin-bottom: 18px;">
+                            {% if driver.phone %}
+                                <div class="mb-2" style="background: #fffbe6; border-radius: 8px; padding: 7px 0; color: #b48a00;"><i class="fa-solid fa-phone me-1"></i> {{ driver.phone }}</div>
+                            {% endif %}
+                            {% if driver.gender %}
+                                <div class="mb-2" style="background: #eaf6ff; border-radius: 8px; padding: 7px 0; color: #302e22a3;"><i class="fa-solid fa-venus-mars me-1"></i> {{ driver.get_gender_display }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="tp-email mb-2" style="font-size: 1.13rem; background: #f3f3f3; border-radius: 8px; padding: 7px 0; margin-bottom: 18px;">
+                            {% if driver.user.email %}
+                                <a href="mailto:{{ driver.user.email }}" target="_blank" style="color: #474341; text-decoration: underline;">
+                                    <i class="fa-solid fa-envelope me-1" style="color:#f2c235;"></i> - {{ driver.user.email }}
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <span class="tp-badge {% if driver.status == 'PENDING' %}pending{% elif driver.status == 'APPROVED' %}approved{% elif driver.status == 'REJECTED' %}rejected{% endif %}" style="font-size: 1.09rem; padding: 8px 26px; margin-top: 10px; display: inline-block; border-radius: 16px; background: linear-gradient(135deg, #f2c235 0%, #f8d66d 100%); color: #474341; font-weight: 600; letter-spacing: 0.5px;">
                             {{ driver.get_status_display }}
                         </span>
 
@@ -67,8 +82,17 @@
                             </div>
                         </div>
                         <div>
-                            <a href="#" class="btn btn-sm" style="background: linear-gradient(135deg, #f2c235 0%, #f8d66d 100%); color: #474341; border: none; padding: 6px 14px; font-size: 0.85rem; border-radius: 20px; font-weight: 500;">
-                                <i class="fa-solid fa-pen" style="font-size: 0.8rem;"></i> Edit
+                            <a href="{% url 'accounts:edit_driver_profile' %}" class="btn btn-sm" style="background: linear-gradient(135deg, #f2c235 0%, #f8d66d 100%); color: #474341; border: none; padding: 6px 14px; font-size: 0.85rem; border-radius: 20px; font-weight: 500;">
+                                <i class="fa-solid fa-pen" style="font-size: 0.8rem;"></i> Edit Profile
+                            </a>
+                            <a href="{% url 'drivers:driver_car' %}" class="btn btn-sm" style="background: linear-gradient(135deg, #f2c235 0%, #f8d66d 100%); color: #474341; border: none; padding: 6px 14px; font-size: 0.85rem; border-radius: 20px; font-weight: 500;">
+                                {% if driver.car %}
+                                    <i class="fa-solid fa-pen-to-square me-2"></i>
+                                    Edit Car Information
+                                {% else %}
+                                    <i class="fa-solid fa-plus me-2"></i>
+                                    Add Your Car
+                                {% endif %}
                             </a>
                         </div>
                     </div>
@@ -127,14 +151,24 @@
                                 </div>
 
                                 <div class="tp-info-row">
-                                    <div class="tp-info-label">Cities:</div>
+                                    <div class="tp-info-label">City:</div>
                                     <div class="tp-info-value">
-                                        {% if driver.cities.exists %}
-                                            {% for city in driver.cities.all %}
-                                                <span class="badge bg-secondary me-1">{{ city.name }}</span>
-                                            {% endfor %}
+                                        {% if driver.city %}
+                                            <span class="badge bg-secondary">{{ driver.city.name }}</span>
                                         {% else %}
                                             Not provided
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                 <div class="tp-info-row">
+                                    <div class="tp-info-label">Car Registration (Istimara):</div>
+                                    <div class="tp-info-value">
+                                        {% if driver.car_registration %}
+                                            <a href="{{ driver.car_registration.url }}" target="_blank">
+                                                <img src="{{ driver.car_registration.url }}" alt="Car Registration" class="tp-image-preview">
+                                            </a>
+                                        {% else %}
+                                            Not uploaded
                                         {% endif %}
                                     </div>
                                 </div>
@@ -151,6 +185,8 @@
                                         {% endif %}
                                     </div>
                                 </div>
+
+                               
                             </div>
                         </div>
 
@@ -159,69 +195,46 @@
                             <div class="tp-card">
                                 <h6 class="tp-card-title">Vehicle Information</h6>
 
-                                {% if driver.car %}
+                                <form>
+                                    {% if car %}
                                     <div class="tp-info-row">
                                         <div class="tp-info-label">Company:</div>
-                                        <div class="tp-info-value">{{ driver.car.company.name|default:"Not specified" }}</div>
+                                        <div class="tp-info-value">{{ car.company.name }}</div>
                                     </div>
 
                                     <div class="tp-info-row">
                                         <div class="tp-info-label">Model:</div>
-                                        <div class="tp-info-value">{{ driver.car.model|default:"Not specified" }}</div>
+                                        <div class="tp-info-value">{{ car.model }}</div>
                                     </div>
 
                                     <div class="tp-info-row">
                                         <div class="tp-info-label">Year:</div>
-                                        <div class="tp-info-value">{{ driver.car.year|default:"Not specified" }}</div>
+                                        <div class="tp-info-value">{{ car.year }}</div>
                                     </div>
 
                                     <div class="tp-info-row">
                                         <div class="tp-info-label">Color:</div>
-                                        <div class="tp-info-value">{{ driver.car.color|default:"Not specified" }}</div>
+                                        <div class="tp-info-value">{{ car.color }}</div>
                                     </div>
 
                                     <div class="tp-info-row">
                                         <div class="tp-info-label">Plate Number:</div>
-                                        <div class="tp-info-value">{{ driver.car.plate_number|default:"Not specified" }}</div>
+                                        <div class="tp-info-value">{{ car.plate_number }}</div>
                                     </div>
 
                                     <div class="tp-info-row">
                                         <div class="tp-info-label">Seats Count:</div>
-                                        <div class="tp-info-value">{{ driver.car.seats_count|default:"Not specified" }}</div>
+                                        <div class="tp-info-value">{{ car.seats_count }}</div>
                                     </div>
-
-                                    <div class="tp-info-row">
-                                        <div class="tp-info-label">Car Registration:</div>
-                                        <div class="tp-info-value">
-                                            {% if driver.car.car_registration %}
-                                                <a href="{{ driver.car.car_registration.url }}" target="_blank">
-                                                    <img src="{{ driver.car.car_registration.url }}" alt="Car Registration" class="tp-image-preview">
-                                                </a>
-                                            {% else %}
-                                                Not uploaded
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <div class="tp-info-row">
-                                        <div class="tp-info-label">Car Registration (Istimara):</div>
-                                        <div class="tp-info-value">
-                                            {% if driver.car_registration %}
-                                                <a href="{{ driver.car_registration.url }}" target="_blank">
-                                                    <img src="{{ driver.car_registration.url }}" alt="Car Registration" class="tp-image-preview">
-                                                </a>
-                                            {% else %}
-                                                Not uploaded
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <p class="tp-empty-text mt-3">
-                                        Vehicle details will be added later. Only registration document is available.
+                                    {% else %}
+                                    <p class="tp-empty-text">
+                                        No vehicle information available. Please add your vehicle details.
                                     </p>
-                                {% endif %}
+                                    {% endif %}
+                                </form>
+                                
                             </div>
                         </div>
-
                         <!-- Trips Tab -->
                         <div class="tab-pane fade" id="trips">
                             <div class="tp-card">

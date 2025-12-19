@@ -1,87 +1,83 @@
 from django import forms
-from .models import Driver, Car
+from .models import Driver, Car, CarCompany
+from main.models import City, Nationality
 
 
 class DriverForm(forms.ModelForm):
+    # تعريف كل الحقول كإجبارية
+    phone = forms.CharField(
+        required=True, 
+        max_length=17,
+        label='Phone Number *',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '9665xxxxxxxx or 05xxxxxxxx'
+        })
+    )
+    national_id_or_iqama = forms.CharField(
+        required=True, 
+        max_length=20,
+        label='National ID / Iqama *',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your ID/Iqama number'
+        })
+    )
+    gender = forms.ChoiceField(
+        required=True,
+        label='Gender *',
+        choices=Driver.Gender.choices,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    date_of_birth = forms.DateField(
+        required=True,
+        label='Date of Birth *',
+        widget=forms.DateInput(attrs={
+            'class': 'form-control',
+            'type': 'date'
+        })
+    )
+    city = forms.ModelChoiceField(
+        required=True,
+        label='City *',
+        queryset=City.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    nationality = forms.ModelChoiceField(
+        required=True,
+        label='Nationality *',
+        queryset=Nationality.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    licenses = forms.ImageField(
+        required=True,
+        label='Driving License *',
+        widget=forms.FileInput(attrs={'class': 'form-control'})
+    )
+    car_registration = forms.ImageField(
+        required=True,
+        label='Car Registration (Istimara) *',
+        widget=forms.FileInput(attrs={'class': 'form-control'})
+    )
+    
     class Meta:
         model = Driver
-        exclude = ['user', 'status', 'cities']  # استثناء user و status و cities (يتم معالجتها يدوياً)
+        exclude = ['user', 'status', 'rating', 'car']
         
-        # Labels
-        labels = {
-            'phone': 'Phone Number',
-            'national_id_or_iqama': 'National ID / Iqama',
-            'gender': 'Gender',
-            'avatar': 'Profile Picture',
-            'date_of_birth': 'Date of Birth',
-            'licenses': 'Driving License',
-            'car_registration': 'Car Registration (Istimara)',
-            'car': 'Car',
-        }
-        
-        # إضافة widgets للتنسيق
+        # Widgets للحقول المتبقية
         widgets = {
-            'phone': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': '9665xxxxxxxx or 05xxxxxxxx'
-            }),
-            'national_id_or_iqama': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter your ID/Iqama number'
-            }),
-            'gender': forms.Select(attrs={
-                'class': 'form-select'
-            }),
-            'date_of_birth': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date'
-            }),
             'avatar': forms.FileInput(attrs={
                 'class': 'form-control'
             }),
-            'licenses': forms.FileInput(attrs={
-                'class': 'form-control'
-            }),
-            'car_registration': forms.FileInput(attrs={
-                'class': 'form-control'
-            }),
-            'car': forms.Select(attrs={
-                'class': 'form-select'
-            }),
-            'cities': forms.SelectMultiple(attrs={
-                'class': 'form-select',
-                'size': '5'
-            }),
         }
         
-        # help texts
-        help_texts = {
-            'phone': 'Format: 9665xxxxxxxx or 05xxxxxxxx',
-            'cities': 'Hold Ctrl/Cmd to select multiple cities',
-            'car_registration': 'Upload a photo of your car registration document',
+        # Labels للحقول المتبقية
+        labels = {
+            'avatar': 'Profile Picture',
         }
-
 
 
 class CarForm(forms.ModelForm):
     class Meta:
         model = Car
-        fields = [
-            'company',
-            'model',
-            'year',
-            'color',
-            'plate_number',
-            'seats_count',
-            'car_registration',
-        ]
-
-        widgets = {
-            'company': forms.Select(attrs={'class': 'form-select'}),
-            'model': forms.TextInput(attrs={'class': 'form-control'}),
-            'year': forms.NumberInput(attrs={'class': 'form-control'}),
-            'color': forms.TextInput(attrs={'class': 'form-control'}),
-            'plate_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'seats_count': forms.NumberInput(attrs={'class': 'form-control'}),
-            'car_registration': forms.FileInput(attrs={'class': 'form-control'}),
-        }
+        fields = '__all__'
