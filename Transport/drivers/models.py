@@ -1,11 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
-from main.models import City
+from main.models import City, Nationality
 from django.core.validators import RegexValidator
 
 # Create your models here.
 class CarCompany(models.Model):
     name = models.CharField(max_length=300)
+    
+    def __str__(self):
+        return self.name
 
 class Car(models.Model):
     company = models.ForeignKey(CarCompany, on_delete=models.CASCADE)
@@ -17,6 +20,13 @@ class Car(models.Model):
     car_registration = models.ImageField(upload_to="images/")
     
 class Driver (models.Model):
+    #rating choices
+    class RatingChoices(models.IntegerChoices):
+        STAR1 = 1, "One Star"
+        STAR2 = 2, "Two Stars"
+        STAR3 = 3, "Three Stars"
+        STAR4 = 4, "Four Stars"
+        STAR5 = 5, "Five Stars"
     #status 
     STATUS_CHOICES = [
         ('PENDING', 'Pending'),
@@ -34,15 +44,20 @@ class Driver (models.Model):
         F = "female", "Female"
         M = "male", "Male"
 
+    #fields    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True, null=True)
     national_id_or_iqama = models.CharField(max_length=20, blank=True, null=True)
     gender = models.CharField(max_length=6, choices=Gender.choices, default=Gender.F)
     avatar = models.ImageField(upload_to="images/avatars/",default="images/avatars/avatar.webp")
     date_of_birth = models.DateField(blank=True, null=True)
-    cities = models.ManyToManyField(City, blank=True)
-    licenses = models.ImageField(upload_to="images/", blank=True, null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, blank=True, null=True)
+    nationality = models.ForeignKey(Nationality, on_delete=models.SET_NULL, blank=True, null=True)
+    licenses = models.ImageField(upload_to="images/licenses/", blank=True, null=True)
+    car_registration = models.ImageField(upload_to="images/car_registrations/", blank=True, null=True)
     car = models.OneToOneField(Car, on_delete=models.CASCADE, blank=True, null=True)
+
+    rating = models.SmallIntegerField(choices=RatingChoices.choices ,default=RatingChoices.STAR5)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
 
 

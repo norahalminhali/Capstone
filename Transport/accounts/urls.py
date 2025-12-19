@@ -9,5 +9,6 @@ urlpatterns=[
     path('signin/', views.sign_in, name='sign_in'),
     path('logout/', views.log_out, name='log_out'),
     path('profile/driver/', views.profile_driver, name='profile_driver'),
+    path('profile/driver/edit/', views.edit_driver_profile, name='edit_driver_profile'),
     path('profile/rider/', views.profile_rider, name='profile_rider'),
 ]
