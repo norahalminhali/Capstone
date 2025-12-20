@@ -352,3 +352,69 @@
         padding: 10px 14px;
     }
 }
+
+/* ===== Global Form Field Styling =====*/
+.auth-form input,
+.auth-form select,
+.auth-form textarea {
+    padding: 12px 16px;
+    border: 2px solid #a3a2a2;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    width: 100%;
+    background-color: #f8f7f5;
+    transition: .3s ease;
+    margin-bottom: 0 !important;
+}
+
+.auth-form input:focus,
+.auth-form select:focus,
+.auth-form textarea:focus {
+    border-color: #f2c235;
+    background-color: white;
+    box-shadow: 0 0 0 .2rem rgba(242, 194, 53, 0.25);
+    outline: none;
+}
+
+/* labels */
+.auth-form label.form-label {
+    font-weight: 600;
+    color: #474341;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+/* spacing between fields */
+.auth-form .mb-3,
+.auth-form .mb-4 {
+    margin-bottom: 1.6rem !important;
+}
+
+/* upload button */
+.auth-form input[type="file"]::file-selector-button {
+    background: linear-gradient(135deg, #f2c235 0%, #e0b020 100%);
+    border: none;
+    color: #474341;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+
+.auth-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #f2c235 0%, #e0b020 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 5px 15px rgba(242, 194, 53,0.3);
+}
+
+.auth-icon i {
+    font-size: 2.5rem;
+    color: #474341;
+}

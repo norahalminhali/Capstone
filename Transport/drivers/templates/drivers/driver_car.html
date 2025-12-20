@@ -4,100 +4,144 @@
 {% block title %}Car Information{% endblock %}
 
 {% block content %}
-<div class="tp-profile-page">
-    <div class="tp-shell">
-        <div class="tp-inner">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="tp-header mb-4">
-                        <div>
-                            <div class="tp-header-title">
-                                <i class="fa-solid fa-car me-2"></i>
-                                {% if car %}Edit Car Information{% else %}Add Your Car{% endif %}
-                            </div>
-                            <p class="text-muted mb-0">Each driver can register only one car</p>
-                        </div>
-                        <div>
-                            <a href="{% url 'accounts:profile_driver' %}" class="btn btn-sm btn-secondary">
-                                <i class="fa-solid fa-arrow-left me-1"></i> Back to Profile
-                            </a>
-                        </div>
-                    </div>
+<div class="auth-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-7">
 
-                    <!-- Messages -->
-                    {% if messages %}
+                <div class="auth-card">
+
+                    <!-- Back Button -->
+                    <a href="{% url 'accounts:profile_driver' %}" class="btn auth-btn auth-btn-secondary w-100 mb-4 "
+                        style=" color:#474341; margin:20px ; ">
+                        <i class="fa-solid fa-arrow-left me-2"></i> Back to Profile
+                    </a>
+
+
+                    <div class="card-body p-4 p-md-5">
+
+                        <!-- Icon & Header -->
+                        <div class="auth-header mb-4">
+                            <div class="auth-icon mb-2">
+                                <i class="fa-solid fa-car"></i>
+                            </div>
+                            <h2 class="mb-1">
+                                {% if car %}
+                                Edit Car Information
+                                {% else %}
+                                Add Your Car
+                                {% endif %}
+                            </h2>
+                            <p>Each driver can register only one car</p>
+                        </div>
+
+                        <!-- Messages -->
+                        {% if messages %}
                         {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
+                        <div class="alert-custom alert-{{ message.tags }}-custom mb-3">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <span>{{ message }}</span>
+                        </div>
                         {% endfor %}
-                    {% endif %}
+                        {% endif %}
 
-                    <div class="tp-card">
-                        <form method="POST" enctype="multipart/form-data">
+                        <form method="POST" enctype="multipart/form-data" action="{% url 'drivers:driver_car' %}"
+                            class="auth-form">
                             {% csrf_token %}
 
-                            <h6 class="tp-card-title mb-3">Car Information</h6>
+                            <!-- Car Information -->
+                            <h5 class="form-section-title mb-3">
+                                <i class="fa-solid fa-car-side"></i> Car Information
+                            </h5>
 
+                            <div class="mb-3">
+                                <label class="form-label">Car Company</label>
+                                {{ form.company }}
+                                {% if form.company.errors %}
+                                <div class="text-danger small">{{ form.company.errors }}</div>
+                                {% endif %}
+                            </div>
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Car Company</label>
-                                    {{ form.company }}
-                                    {% if form.company.errors %}
-                                        <div class="text-danger small">{{ form.company.errors }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Model</label>
-                                    {{ form.model }}
-                                    {% if form.model.errors %}
-                                        <div class="text-danger small">{{ form.model.errors }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Model</label>
+                                {{ form.model }}
+                                {% if form.model.errors %}
+                                <div class="text-danger small">{{ form.model.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Year</label>
                                     {{ form.year }}
                                     {% if form.year.errors %}
-                                        <div class="text-danger small">{{ form.year.errors }}</div>
+                                    <div class="text-danger small">{{ form.year.errors }}</div>
                                     {% endif %}
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Color</label>
                                     {{ form.color }}
                                     {% if form.color.errors %}
-                                        <div class="text-danger small">{{ form.color.errors }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Plate Number</label>
-                                    {{ form.plate_number }}
-                                    {% if form.plate_number.errors %}
-                                        <div class="text-danger small">{{ form.plate_number.errors }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Seats Count</label>
-                                    {{ form.seats_count }}
-                                    {% if form.seats_count.errors %}
-                                        <div class="text-danger small">{{ form.seats_count.errors }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label">Car Registration (Istimara)</label>
-                                    {{ form.car_registration }}
-                                    {% if form.car_registration.errors %}
-                                        <div class="text-danger small">{{ form.car_registration.errors }}</div>
+                                    <div class="text-danger small">{{ form.color.errors }}</div>
                                     {% endif %}
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn tp-btn tp-btn-primary w-100 mt-3">
-                                <i class="fa-solid fa-check me-2"></i>
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Plate Number</label>
+                                    {{ form.plate_number }}
+                                    {% if form.plate_number.errors %}
+                                    <div class="text-danger small">{{ form.plate_number.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Seats Count</label>
+                                    {{ form.seats_count }}
+                                    {% if form.seats_count.errors %}
+                                    <div class="text-danger small">{{ form.seats_count.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label class="form-label">Car Registration (Istimara)</label>
+
+                                <!-- عرض الصورة الحالية إذا كانت موجودة -->
+                                {% if car and car.car_registration %}
+                                <div class="mb-3 text-center">
+                                    <img src="{{ car.car_registration.url }}" alt="Car Registration"
+                                        style="max-height:200px; border-radius:6px;">
+                                </div>
+                                {% endif %}
+
+                                
+                                <!-- input رفع الصورة -->
+                                <input type="file" name="car_registration" accept="image/*" class="form-control">
+
+
+                                <!-- رسائل الخطأ -->
+                                {% if form.car_registration.errors %}
+                                <div class="text-danger small">
+                                    {{ form.car_registration.errors }}
+                                </div>
+                                {% endif %}
+
+                                <p class="form-section-title mb-3"  style=" color:#474341; margin: 10px 0 ; ">
+                                    You can only upload image
+                                </p>
+
+                            </div>
+
+
+                            <button type="submit" class="btn auth-btn auth-btn-primary w-100 mt-3">
+                                <i class="fa-solid fa-check me-2 "></i>
                                 {% if car %} Update Car {% else %} Save Car {% endif %}
                             </button>
+
                         </form>
+
                     </div>
                 </div>
             </div>
