@@ -77,7 +77,46 @@ class DriverForm(forms.ModelForm):
         }
 
 
+
+
 class CarForm(forms.ModelForm):
     class Meta:
         model = Car
         fields = '__all__'
+        widgets = {
+            'company': forms.Select(attrs={
+                'class': 'form-select',
+                'id': 'carCompany',
+            }),
+            'model': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'carModel',
+                'placeholder': 'Enter model name (e.g., Corolla)'
+            }),
+            'year': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'id': 'carYear',
+                'placeholder': 'Enter manufacturing year (e.g., 2022)'
+            }),
+            'color': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'carColor',
+                'placeholder': 'Enter car color (e.g., Red, Black)'
+            }),
+            'plate_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'plateNumber',
+                'placeholder': 'Enter plate number (e.g., ABC-1234)'
+            }),
+            'seats_count': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'id': 'seatsCount',
+                'placeholder': 'Enter number of seats (e.g., 5)'
+            }),
+            'car_registration': forms.FileInput(attrs={
+                'class': 'form-control',
+                'id': 'carRegistration',
+                'accept': 'images/*',
+                'placeholder': 'Upload car registration document (image)'
+            }),
+        }
