@@ -37,13 +37,13 @@ class RiderForm(forms.ModelForm):
                 'type': 'date'
             }),
             'avatar': forms.FileInput(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
             }),
             'size_car': forms.Select(attrs={
-                'class': 'form-select'
+                'class': 'form-select',
             }),
             
-            'City': forms.Select(attrs={
+            'city': forms.Select(attrs={
                 'class': 'form-select'
     
 
@@ -53,7 +53,7 @@ class RiderForm(forms.ModelForm):
         # Help texts
         help_texts = {
             'phone': 'Format: 9665xxxxxxxx or 05xxxxxxxx',
-            'City': 'Select your city from the list',
+            'city': 'Select your city from the list',
             'size_car': 'Choose the car size you prefer for your trips',
         }
 

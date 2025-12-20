@@ -75,9 +75,8 @@ def sign_up_rider(request: HttpRequest):
 
     # GET
     form = RiderForm()
-    return render(request, 'accounts/signup_rider.html', {
-        'form': form,
-    })
+    cities = City.objects.all()
+    return render(request, 'accounts/signup_rider.html', {'form': form, 'cities': cities})
 
 
 
@@ -197,3 +196,27 @@ def edit_driver_profile(request: HttpRequest):
 def profile_rider(request: HttpRequest):
    rider = request.user.rider
    return render(request, 'accounts/profile_rider.html', {'rider': rider})
+
+
+def edit_rider_profile(request: HttpRequest):
+    """تعديل بروفايل الراكب"""
+    rider = request.user.rider
+    
+    if request.method == 'POST':
+        rider_form = RiderForm(request.POST, request.FILES, instance=rider)
+        if rider_form.is_valid():
+            rider_form.save()
+            messages.success(request, 'Profile updated successfully!', "alert-success")
+            return redirect('accounts:profile_rider')
+        else:
+            messages.error(request, 'Please correct the errors below.', "alert-danger")
+    else:
+        rider_form = RiderForm(instance=rider)
+    
+    cities = City.objects.all()
+    
+    return render(request, 'accounts/edit_rider_profile.html', {
+        'rider': rider,
+        'form': rider_form,
+        'cities': cities,
+    })

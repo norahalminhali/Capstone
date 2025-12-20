@@ -11,4 +11,5 @@ urlpatterns=[
     path('profile/driver/', views.profile_driver, name='profile_driver'),
     path('profile/driver/edit/', views.edit_driver_profile, name='edit_driver_profile'),
     path('profile/rider/', views.profile_rider, name='profile_rider'),
+    path('profile/rider/edit/', views.edit_rider_profile, name='edit_rider_profile'),
 ]

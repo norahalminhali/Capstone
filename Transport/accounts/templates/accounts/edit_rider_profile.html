@@ -1,0 +1,36 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block title %}Edit Rider Profile{% endblock %}
+
+{% block content %}
+
+<div class="tp-profile-page">
+    <div class="tp-shell">
+        <div class="tp-inner">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    
+                    <div class="tp-header mb-4">
+                        <div>
+                            <div class="tp-header-title">
+                                <i class="fa-solid fa-pen me-2"></i>Edit Profile
+                            </div>
+                            <p class="text-muted">Update your rider information</p>
+                            </div>
+                        <div>
+                            <a href="{% url 'accounts:profile_rider' %}" class="btn
+                            btn-sm btn-secondary">
+                                <i class="fa-solid fa-arrow-left me-1"></i> Back to Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
