@@ -3,8 +3,7 @@
 
 {% block title %}Trip Details{% endblock %}
 
-{% block content %}
-
+{% block style %}
 <style>
     body {
         background: linear-gradient(135deg, #f8f7f5 0%, #f8e7c57d 90%);
@@ -56,8 +55,19 @@
         border-radius: 14px;
         box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
     }
-</style>
 
+    /* حل مشكلة المودال */
+    .modal {
+        z-index: 20000 !important;
+    }
+
+    .modal-backdrop {
+        z-index: 19999 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
 
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mt-5 mb-4">
@@ -69,22 +79,17 @@
         <!-- Trip Information -->
         <div class="col-lg-8">
             <div class="card custom-card p-4 h-100">
-
                 <div class="d-flex justify-content-between section-title align-items-center mb-3">
                     <h5 class=" m-0">
                         <i class="fa-solid fa-route me-2"></i>
                         Trip Information
                     </h5>
-
                     <div class="d-flex gap-2">
-
-
                         {% if request.user == trip.driver.user %}
                         <a href="{% url 'trips:update_trip_view' trip.id %}"
                             class="btn btn-sm btn-outline-warning fw-bold">
                             <i class="fa-solid fa-pen me-1"></i> Edit
                         </a>
-
                         <form method="POST" action="{% url 'trips:delete_trip_view' trip.id %}" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-sm btn-outline-danger fw-bold"
@@ -92,77 +97,39 @@
                                 <i class="fa-solid fa-trash me-1"></i> Delete
                             </button>
                         </form>
-
-
-
-                        <!-- زر الانضمام -->
                         {% elif request.user.is_authenticated and request.user.rider %}
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal"
                             data-bs-target="#joinTripModal">
                             <i class="fa-solid fa-plus me-1"></i> Join Trip
                         </button>
                         {% endif %}
-
                     </div>
                 </div>
 
-
                 <p class="info-text"><strong>City:</strong> {{ trip.city.name }}</p>
-
-                <p class="info-text">
-                    <strong>From:</strong>
-                    {% for n in trip.start_neighborhood.all %}
-                    {{ n.name }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
+                <p class="info-text"><strong>From:</strong>
+                    {% for n in trip.start_neighborhood.all %}{{ n.name }}{% if not forloop.last %}, {% endif %}
+                    {%endfor %}
                 </p>
-
-                <p class="info-text">
-                    <strong>To:</strong>
-                    {% for n in trip.end_neighborhood.all %}
-                    {{ n.name }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
+                <p class="info-text"><strong>To:</strong>
+                    {% for n in trip.end_neighborhood.all %}{{ n.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor%}
                 </p>
-
-                <p class="info-text">
-                    <strong>Days:</strong>
-                    {% for day in trip.days_of_week.all %}
-                    {{ day.name }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
+                <p class="info-text"><strong>Days:</strong>
+                    {% for day in trip.days_of_week.all %}{{ day.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor%}
                 </p>
-
-                <p class="info-text">
-                    <strong>Date:</strong>
-                    {{ trip.start_date }} – {{ trip.end_date }}
-                </p>
-
-                <p class="info-text">
-                    <strong>Time:</strong>
-                    {{ trip.start_time }} – {{ trip.end_time }}
-                </p>
-
-                <p class="info-text">
-                    <strong>Available Seats:</strong>
-                    {{ trip.total_riders }}
-                </p>
-
-                <p class="info-text mb-0">
-                    <strong>Price:</strong>
-                    <span class="price">${{ trip.price }}</span>
-                </p>
-
+                <p class="info-text"><strong>Date:</strong> {{ trip.start_date }} – {{ trip.end_date }}</p>
+                <p class="info-text"><strong>Time:</strong> {{ trip.start_time }} – {{ trip.end_time }}</p>
+                <p class="info-text"><strong>Available Seats:</strong> {{ trip.total_riders }}</p>
+                <p class="info-text mb-0"><strong>Price:</strong> <span class="price">${{ trip.price }}</span></p>
             </div>
         </div>
 
-        <!-- Driver and car Information -->
+        <!-- Driver and Car Information -->
         <div class="col-lg-4">
             <div class="card custom-card p-4 h-100">
-
-                <!-- Driver Information -->
-                <h5 class="section-title">
-                    <i class="fa-solid fa-user me-2"></i>
-                    Driver Information
-                </h5>
-
+                <h5 class="section-title"><i class="fa-solid fa-user me-2"></i>Driver Information</h5>
                 <div class="d-flex align-items-center gap-3 mb-3">
                     <img src="{{ driver.avatar.url }}" class="rounded-circle avatar" width="90" height="90">
                     <div>
@@ -170,19 +137,10 @@
                         <small class="text-muted">{{ driver.gender }}</small>
                     </div>
                 </div>
-
                 <p class="info-text"><strong>Phone:</strong> {{ driver.phone }}</p>
-
-                <!-- Divider -->
                 <hr style="border-color:#a3a2a2; opacity:.3; margin:22px 0;">
-
-                <!-- Car Information -->
                 {% if car %}
-                <h5 class="section-title">
-                    <i class="fa-solid fa-car me-2"></i>
-                    Car Information
-                </h5>
-
+                <h5 class="section-title"><i class="fa-solid fa-car me-2"></i>Car Information</h5>
                 <p class="info-text"><strong>Company:</strong> {{ car.company.name }}</p>
                 <p class="info-text"><strong>Model:</strong> {{ car.model }}</p>
                 <p class="info-text"><strong>Year:</strong> {{ car.year }}</p>
@@ -192,132 +150,142 @@
                 {% else %}
                 <p class="text-muted mb-0">No car information available.</p>
                 {% endif %}
-
             </div>
         </div>
 
-
     </div>
-    {% if request.user == trip.driver.user %}
-    <!-- Join Requests -->
-    <div class="row g-4 mb-5">
-        <div class="col-12">
-            <div class="card custom-card p-4">
 
-                <h5 class="section-title">
-                    <i class="fa-solid fa-users me-2"></i>
-                    Join Requests
-                </h5>
-
-                {% if join_requests %}
-                <div class="table-responsive">
-                    <table class="table align-middle text-center">
-                        <thead>
-                            <tr style="color:#474341;">
-                                <th>User</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Notes</th>
-                                <th>Status</th>
-                                {% if request.user == trip.driver.user %}
-                                <th>Action</th>
+<!-- Join Requests (Driver Only) -->
+{% if request.user == trip.driver.user %}
+<div class="row g-4 mb-5">
+    <div class="col-12">
+        <div class="card custom-card p-4">
+            <h5 class="section-title"><i class="fa-solid fa-users me-2"></i>Join Requests</h5>
+            {% if join_requests %}
+            <div class="table-responsive">
+                <table class="table align-middle text-center">
+                    <thead>
+                        <tr style="color:#474341;">
+                            <th>User</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Notes</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in join_requests %}
+                        <tr>
+                            <td class="fw-semibold">{{ r.rider.user.username }}</td>
+                            <td>{{ r.start_date }}</td>
+                            <td>{{ r.end_date }}</td>
+                            <td class="text-muted">{{ r.comment|default:"—" }}</td>
+                            <td>
+                                {% if r.rider_status == 'PENDING' %}
+                                <span class="badge bg-secondary">Pending</span>
+                                {% elif r.rider_status == 'APPROVED' %}
+                                <span class="badge bg-success">Approved</span>
+                                {% elif r.rider_status == 'REJECTED' %}
+                                <span class="badge bg-danger">Rejected</span>
                                 {% endif %}
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {% for r in join_requests %}
-                            <tr>
-                                <td class="fw-semibold">{{ r.user.username }}</td>
-                                <td>{{ r.start_date }}</td>
-                                <td>{{ r.end_date }}</td>
-                                <td class="text-muted">{{ r.notes|default:"—" }}</td>
-
-                                <!-- Status -->
-                                <td>
-                                    {% if r.status == 'pending' %}
-                                    <span class="badge bg-secondary">Pending</span>
-                                    {% elif r.status == 'approved' %}
-                                    <span class="badge bg-success">Approved</span>
-                                    {% else %}
-                                    <span class="badge bg-danger">Rejected</span>
-                                    {% endif %}
-                                </td>
-
-                                <!-- Driver Actions -->
-                                {% if request.user == trip.driver.user %}
-                                <td>
-                                    {% if r.status == 'pending' %}
-                                    <form method="POST" action="{% url 'trips:update_request_status_view' r.id %}"
-                                        class="d-flex gap-2 justify-content-center">
-                                        {% csrf_token %}
-
-                                        <button name="status" value="approved" class="btn btn-sm btn-success fw-bold">
-                                            Accept
-                                        </button>
-
-                                        <button name="status" value="rejected" class="btn btn-sm btn-danger fw-bold">
-                                            Reject
-                                        </button>
-                                    </form>
-                                    {% else %}
-                                    <span class="text-muted">—</span>
-                                    {% endif %}
-                                </td>
+                            </td>
+                            <td>
+                                {% if r.rider_status == 'PENDING' %}
+                                <form method="POST" action="{% url 'trips:update_request_status_view' r.id %}" class="d-flex gap-2 justify-content-center align-items-center">
+                                    {% csrf_token %}
+                                    <select name="status" class="form-select form-select-sm status-select" style="width:auto;">
+                                        <option value="APPROVED">Accept</option>
+                                        <option value="REJECTED">Reject</option>
+                                    </select>
+                                    <input type="text" name="reject_Comment" class="form-control form-control-sm reject-comment" placeholder="Reason for rejection" style="display:none;">
+                                    <button type="submit" class="btn btn-sm btn-primary fw-bold">Update</button>
+                                </form>
+                                {% else %}
+                                <span class="text-muted">—</span>
                                 {% endif %}
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                {% else %}
-                <p class="text-muted mb-0">No join requests yet.</p>
-                {% endif %}
-
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+            {% else %}
+            <p class="text-muted mb-0">No join requests yet.</p>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
-
-    <!-- Modal JoinTrip-->
-    <div class="modal fade" id="joinTripModal" tabindex="-1" aria-labelledby="joinTripModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="POST" action="{% url 'trips:join_trip_view' trip.id %}">
-                    {% csrf_token %}
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="joinTripModalLabel">Request to Join Trip</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Start Date *</label>
-                                <input type="date" name="start_date" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">End Date *</label>
-                                <input type="date" name="end_date" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                                <label class="form-label">Notes</label>
-                                <input type="text" name="comment" class="form-control">
-                            </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn auth-btn auth-btn-primary w-100 mt-3">
-                                <i class="fa-solid fa-plus me-2"></i>Send Request
-                            </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+</div>
+{% endif %}
 
 
 </div>
+
+<!-- MODAL -->
+<div class="modal fade" id="joinTripModal" tabindex="-1" aria-labelledby="joinTripModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{% url 'trips:join_trip_view' trip.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="joinTripModalLabel">Request to Join Trip</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Start Date *</label>
+                            <input type="date" name="start_date" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">End Date *</label>
+                            <input type="date" name="end_date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <input type="text" name="comment" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning w-100">
+                        <i class="fa-solid fa-plus me-2"></i>Send Request
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    var joinTripModal = document.getElementById('joinTripModal');
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.body.appendChild(joinTripModal);
+    });
+
+    joinTripModal.addEventListener('show.bs.modal', function () {
+        var openDropdowns = document.querySelectorAll('.custom-dropdown.show-dropdown');
+        openDropdowns.forEach(dd => dd.classList.remove('show-dropdown'));
+    });
+</script>
+
+<script>
+document.querySelectorAll('.status-select').forEach(select => {
+    select.addEventListener('change', function() {
+        const rejectInput = this.closest('form').querySelector('.reject-comment');
+        if (this.value === 'REJECTED') {
+            rejectInput.style.display = 'block';
+        } else {
+            rejectInput.style.display = 'none';
+            rejectInput.value = '';
+        }
+    });
+});
+</script>
 
 {% endblock %}

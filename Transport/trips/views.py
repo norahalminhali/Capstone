@@ -14,8 +14,9 @@ def all_trip_view(request:HttpRequest):
     trips =Trip.objects.filter(admin_status='APPROVED')
     if request.user.is_authenticated:
         try:
+            rider = request.user.rider
             ride_city = request.user.rider.city
-            trips =Trip.objects.filter(city=ride_city, admin_status='APPROVED')# يطلع الرحلات على حسب مدينة الراكب
+            trips =Trip.objects.filter(city=ride_city)# يطلع الرحلات على حسب مدينة الراكب
         except AttributeError:
             pass
 
@@ -25,14 +26,14 @@ def all_trip_view(request:HttpRequest):
                 Q(start_neighborhood__name__icontains=search) |
             Q(end_neighborhood__name__icontains=search)
             )
-    start_neighborhoods = request.GET.getlist('start_neighborhood')
-    if start_neighborhoods:
-        trips = trips.filter(start_neighborhood__id__in=start_neighborhoods)
+    start_neighborhood_ids = request.GET.getlist('start_neighborhood')
+    if start_neighborhood_ids:
+        trips = trips.filter(start_neighborhood__id__in=start_neighborhood_ids)
 
 
-    end_neighborhoods = request.GET.getlist('end_neighborhood')
-    if end_neighborhoods:
-        trips = trips.filter(end_neighborhood__id__in=end_neighborhoods)
+    end_neighborhood_ids = request.GET.getlist('end_neighborhood')
+    if end_neighborhood_ids:
+        trips = trips.filter(end_neighborhood__id__in=end_neighborhood_ids)
        
         start_date = request.GET.get('start_date')
         if start_date:
@@ -44,12 +45,14 @@ def all_trip_view(request:HttpRequest):
         
         trips = trips.distinct()
  
+    print("GET DATA:", request.GET)
 
     return render(request, 'trips/trips_list.html',{'trips':trips})
 
 
 def trip_detail_view(request:HttpRequest, trip_id):
     trip = get_object_or_404(Trip, id=trip_id, admin_status='APPROVED')
+    join_requests = JoinTrip.objects.filter(trip=trip)
 
     driver = trip.driver
     car = driver.car
@@ -57,7 +60,8 @@ def trip_detail_view(request:HttpRequest, trip_id):
     context = {
         'trip':trip,
         'driver':driver,
-        'car': car
+        'car': car,
+        'join_requests':join_requests
     }
     return render(request, 'trips/trip_detail.html',context)
 
@@ -171,6 +175,30 @@ def join_trip_view(request:HttpRequest, trip_id):
             messages.error(request, "Please correct the errors below.", "alert-danger")
         
     return redirect('trips:trip_detail_view', trip_id=trip.id)
+
+def update_request_status_view(request, join_id):
+    join_req = get_object_or_404(JoinTrip, id=join_id)
+
+    if request.user !=join_req.trip.driver.user:
+        messages.error(request, "You are not authorized to update this request.", "alert-danger")
+        return redirect('trips:trip_detail_view', trip_id=join_req.trip.id)
+    
+    if request.method =="POST":
+        status = request.POST.get('status')
+        reject_comment = request.POST.get('reject_comment','').strip()
+
+        if status in ['APPROVED','REJECTED']:
+            join_req.rider_status = status
+            if status == 'REJECTED':
+                join_req.reject_Comment = reject_comment
+            else:
+                join_req.reject_Comment = None
+            join_req.save()
+            messages.success(request,"Request update succssfully") 
+        else:
+            messages.error(request, "Invalid status.")
+       
+    return redirect('trips:trip_detail_view', trip_id=join_req.trip.id)
 
  
 
