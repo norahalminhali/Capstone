@@ -1,0 +1,100 @@
+{# components/comment_block.html #}
+
+<!-- Comments -->
+<div class="row g-4 mb-5">
+    <div class="col-12">
+        <div class="card custom-card p-4">
+
+            <h5 class="section-title">
+                <i class="fa-solid fa-comments me-2"></i>
+                Comments
+            </h5>
+
+            <!-- الفورم الرئيسي لكتابة تعليق -->
+            {% if request.user != rider_request.rider.user %}
+            <form method="POST" action="{% url 'rider_request:add_comment' rider_request.id %}" class="mb-4">
+                {% csrf_token %}
+                <textarea name="comment" required class="form-control mb-2"
+                    placeholder="Write your comment..."></textarea>
+
+                <button class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-paper-plane me-1"></i> Send
+                </button>
+            </form>
+            {% endif %}
+
+            <!-- عرض التعليقات -->
+            {% for comment in comments %}
+            <div class="border-bottom pb-3 mb-3">
+
+                <!-- اسم صاحب التعليق comment.user.rider.id     ,  comment.user.driver.id-->
+                {# الصورة و الاسم مع الرابط #}
+                {% if comment.user.rider %}
+                <a href="{% url 'accounts:profile_rider'  %}">
+                    <img src="{{ driver.avatar.url }}" class="rounded-circle avatar" width="90" height="90">
+
+                    {% else %}
+                    <a href="{% url 'accounts:profile_driver'  %}">
+                        <img src="{{ driver.avatar.url }}" class="rounded-circle avatar" width="90" height="90">
+
+                        {% endif %}
+
+                        <span>{{ comment.user.username }}</span>
+
+                    </a>
+
+                    <p class="mt-1">{{ comment.comment }}</p>
+
+                    <!-- رد صاحب الاعلان على تعليق زبون -->
+                    {% if rider_request.rider.user == request.user %}
+                    <form method="POST" action="{% url 'rider_request:add_comment' rider_request.id %}"
+                        class="ms-4 mb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                        <textarea name="comment" required class="form-control mb-1"
+                            placeholder="Reply to comment..."></textarea>
+
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="fa-solid fa-reply me-1"></i> Reply
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <!-- الردود على التعليق -->
+                    {% for reply in comment.replies.all %}
+                    <div class="ms-5 ps-3 border-start mt-2">
+
+                        <strong>
+                            <i class="fa-solid fa-user me-1"></i>
+                            {{ reply.user.username }}
+                        </strong>
+
+                        <p class="mt-1">{{ reply.comment }}</p>
+
+                        <!-- صاحب الرد يقدر يرد على صاحب الإعلان فقط -->
+                        {% if reply.user == request.user %}
+                        <form method="POST" action="{% url 'rider_request:add_comment' rider_request.id %}"
+                            class="ms-4 mb-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent_id" value="{{ reply.id }}">
+                            <textarea name="comment" required class="form-control mb-1"
+                                placeholder="Reply back..."></textarea>
+
+                            <button class="btn btn-outline-primary btn-sm">
+                                <i class="fa-solid fa-reply me-1"></i> Reply
+                            </button>
+                        </form>
+                        {% endif %}
+
+                    </div>
+                    {% endfor %}
+
+            </div>
+            {% empty %}
+            <p class="text-muted">No comments yet.</p>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+

@@ -60,9 +60,9 @@ def detail_rider_request(request:HttpRequest,  rider_request_id):
 
     rider_request = get_object_or_404(RiderRequest, id = rider_request_id)
     rider = rider_request.rider
-    root_comments = rider_request.comments.filter(parent__isnull=True)
+    comments = rider_request.comments.filter(parent__isnull=True).order_by('-created_at')
 
-    return render(request, "rider_request/rider_request_detail.html", {'rider_request':rider_request,'rider':rider,  "root_comments": root_comments})
+    return render(request, "rider_request/rider_request_detail.html", {'rider_request':rider_request,'rider':rider,  "comments": comments})
 
 #update the rider request ads form
 @login_required

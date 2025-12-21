@@ -9,4 +9,6 @@ urlpatterns = [
     path('detail/<int:rider_request_id>/', views.detail_rider_request, name="detail_rider_request"),
     path('list/',views.list_rider_request,name="list_rider_request"),
     path('delete/<int:pk>/', views.delete_rider_request, name="delete_rider_request"),
+    path("add_comment/<int:rider_request_id>/", views.add_comment, name="add_comment"),
+
 ]
