@@ -8,6 +8,70 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    .profile-hero-minimal {
+        background: #fff;
+        border-radius: 28px;
+        box-shadow: 0 4px 24px #3c333376;
+        padding: 2.5rem 2rem 2rem 2rem;
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.7s cubic-bezier(.4,1.4,.6,1);
+    }
+    .profile-hero-minimal.animated {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .profile-avatar {
+        width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid #f4f4f4; box-shadow: 0 2px 12px #e0e0e0;
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.7s cubic-bezier(.4,1.4,.6,1);
+    }
+    .profile-avatar.animated {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .profile-name { font-size: 2.1rem; font-weight: 700; color: #232323; }
+    .profile-username { color: #888; font-size: 1.1rem; font-weight: 500; }
+    .profile-bio { color: #555; font-size: 1.05rem; margin-bottom: 0.5rem; }
+    .profile-email a { color: #232323; text-decoration: underline dotted; }
+    .profile-badge { background: #ffc266d9; color: #181105; border-radius: 16px; padding: 4px 18px; font-weight: 600; font-size: 1rem; margin-left: 10px; }
+    .profile-edit-btn {
+        background: linear-gradient(135deg, #ffc266d9 0%, #d15f0d59 100%);
+        color: #232323; border: none; padding: 7px 20px; font-size: 1rem; border-radius: 20px; font-weight: 600;
+        box-shadow: 0 2px 8px #ffe06633;
+        transition: box-shadow 0.2s, background 0.2s;
+    }
+    .profile-edit-btn:hover { box-shadow: 0 4px 16px #ffc266d9; background: #0e0c0992; color: #ececec; }
+    .profile-card {
+        background: #f4f4f4;
+        border-radius: 20px;
+        box-shadow: 0 2px 12px #e0e0e0;
+        padding: 2rem 2rem 1.5rem 2rem;
+        margin-bottom: 2rem;
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.7s cubic-bezier(.4,1.4,.6,1) 0.2s;
+    }
+    .profile-card.animated {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .profile-info-row {
+        display: flex; align-items: center; margin-bottom: 1.2rem;
+    }
+    .profile-info-label {
+        min-width: 140px; color: #232323; font-weight: 600; font-size: 1.08rem; display: flex; align-items: center;
+    }
+    .profile-info-value {
+        color: #232323; font-size: 1.13rem; font-weight: 500; margin-left: 18px; display: flex; align-items: center;
+    }
+    .profile-info-row i { margin-right: 8px; color: #ffc266; font-size: 1.2em; }
+</style>
 <div class="tp-profile-page">
     <div class="tp-shell">
         <div class="tp-inner">
@@ -253,4 +317,86 @@
         </div>
     </div>
 </div>
+
+<div class="container tp-profile-page py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="profile-hero-minimal mb-4" id="profileHero">
+                <div class="profile-hero-content d-flex align-items-center gap-4">
+                    {% if driver.avatar and driver.avatar.url and driver.avatar.url != '/media/images/avatars/avatar.webp' %}
+                        <img src="{{ driver.avatar.url }}" alt="Avatar" class="profile-avatar" id="profileAvatar" />
+                    {% else %}
+                        <img src="{% static 'images/avatars/avatar.webp' %}" alt="Avatar" class="profile-avatar" id="profileAvatar" />
+                    {% endif %}
+                    <div>
+                        <div class="profile-name">{{ driver.user.first_name }} {{ driver.user.last_name }} <span class="profile-badge">Driver</span></div>
+                        <div class="profile-username"><i class="fa-solid fa-user"></i> @{{ driver.user.username }}</div>
+                        <div class="profile-bio">{{ driver.bio }}</div>
+                        <div class="profile-email"><i class="fa-solid fa-envelope"></i> <a href="mailto:{{ driver.user.email }}">{{ driver.user.email }}</a></div>
+                    </div>
+        
+                </div>
+            </div>
+            <div class="profile-card" id="profileCard">
+                <div class="ms-auto">
+                <div class="profile-info-row">
+                    <div class="profile-info-label"><i class="fa-solid fa-venus-mars"></i> Gender</div>
+                    <div class="profile-info-value">{{ driver.get_gender_display }}</div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-label"><i class="fa-solid fa-cake-candles"></i> Date of Birth</div>
+                    <div class="profile-info-value">{{ driver.date_of_birth|date:'Y-m-d' }}</div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-label"><i class="fa-solid fa-phone"></i> Phone Number</div>
+                    <div class="profile-info-value">{{ driver.phone }}</div>
+                </div>
+                {% if car %}
+                <div class="profile-info-row">
+                    <div class="profile-info-label"><i class="fa-solid fa-car"></i> Car Company</div>
+                    <div class="profile-info-value">{{ driver.car.company.name }}</div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-label"><i class="fa-solid fa-car-side"></i> Model</div>
+                    <div class="profile-info-value">{{ car.model }}</div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-label"><i class="fa-solid fa-calendar"></i> Year</div>
+                    <div class="profile-info-value">{{ car.year }}</div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-label"><i class="fa-solid fa-palette"></i> Color</div>
+                    <div class="profile-info-value">{{ car.color }}</div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-label"><i class="fa-solid fa-id-card"></i> Plate Number</div>
+                    <div class="profile-info-value">{{ car.plate_number }}</div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-label"><i class="fa-solid fa-users"></i> Seats Count</div>
+                    <div class="profile-info-value">{{ car.seats_count }}</div>
+                </div>
+                        {% else %}
+                        <p class="tp-empty-text">
+                            No vehicle information available. Please add your vehicle details.
+                        </p>
+                {% endif %}
+                <div class="profile-info-row">
+                    <div class="profile-info-label"><i class="fa-solid fa-city"></i> City</div>
+                    <div class="profile-info-value">{{ driver.city.name }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // حركة دخول البطاقة والصورة
+    window.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            document.getElementById('profileHero').classList.add('animated');
+            document.getElementById('profileAvatar').classList.add('animated');
+            document.getElementById('profileCard').classList.add('animated');
+        }, 200);
+    });
+</script>
 {% endblock %}
