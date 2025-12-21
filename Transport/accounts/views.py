@@ -161,8 +161,20 @@ def log_out(request: HttpRequest):
     return redirect('main:home_view')
 
 @login_required
-def profile_driver(request: HttpRequest):
-    driver = request.user.driver
+def profile_driver(request: HttpRequest, driver_id=None):
+    """
+    عرض بروفايل أي سائق لأي مستخدم مسجّل دخول (راكب أو سائق)
+    إذا لم يُحدد driver_id، يعرض بروفايل السائق الحالي
+    """
+    if driver_id:
+        try:
+            driver = Driver.objects.get(id=driver_id)
+        except Driver.DoesNotExist:
+            messages.error(request, "Driver not found.")
+            return redirect('main:home_view')
+    else:
+        # إذا لم يُحدد id، يعرض بروفايل السائق الحالي
+        driver = request.user.driver
     car = driver.car if hasattr(driver, 'car') else None
     return render(request, 'accounts/profile_driver.html', {'driver': driver, 'car': car})
 
@@ -193,11 +205,23 @@ def edit_driver_profile(request: HttpRequest):
     })
 
 @login_required
-def profile_rider(request: HttpRequest):
-   rider = request.user.rider
-   return render(request, 'accounts/profile_rider.html', {'rider': rider})
+def profile_rider(request: HttpRequest, rider_id=None):
+    """
+    عرض بروفايل أي راكب لأي مستخدم مسجّل دخول (راكب أو سائق)
+    إذا لم يُحدد rider_id، يعرض بروفايل الراكب الحالي
+    """
+    if rider_id:
+        try:
+            rider = Rider.objects.get(id=rider_id)
+        except Rider.DoesNotExist:
+            messages.error(request, "Rider not found.")
+            return redirect('main:home_view')
+    else:
+        # إذا لم يُحدد id، يعرض بروفايل الراكب الحالي
+        rider = request.user.rider
+    return render(request, 'accounts/profile_rider.html', {'rider': rider})
 
-
+@login_required
 def edit_rider_profile(request: HttpRequest):
     """تعديل بروفايل الراكب"""
     rider = request.user.rider

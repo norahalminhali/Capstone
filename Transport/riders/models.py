@@ -36,6 +36,9 @@ class Rider (models.Model):
     size_car = models.CharField(max_length=64, choices=SizeCarName.choices, default=SizeCarName.M)
     city = models.ForeignKey(City, on_delete=models.SET_NULL, blank=True, null=True)
 
+    def __str__(self):
+        return self.user.username 
+
 class ReviewRider (models.Model):
 
     rider = models.ForeignKey(Rider, on_delete=models.CASCADE)

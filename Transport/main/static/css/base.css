@@ -194,8 +194,7 @@ main {
     display: flex;
     align-items: center;
     z-index: 2;
-    margin-right: 550px;
-    
+    margin-right: 550px;  
 }
 .nav-menu {
     flex: 1;
@@ -217,6 +216,14 @@ main {
     cursor: pointer;
     transition: all 0.3s ease;
 }
+.logo a,
+.logo a:visited,
+.logo a:active {
+    text-decoration: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
 /* Animated underline for navbar links */
 .nav-link {
     position: relative;
@@ -269,6 +276,7 @@ main {
     color: rgba(18, 17, 17, 0.122);
     z-index: -1;
     transition: all 0.3s ease;
+   
 }
 
 .logo h2:hover::after {
