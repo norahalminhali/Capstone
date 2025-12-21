@@ -11,6 +11,9 @@ from django.template.loader import render_to_string
 
 from rider_request.models import RiderRequest
 from main.models import Contact
+from drivers.models import Driver
+from trips.models import Trip
+from main.models import City
 
 
 # Create your views here.
@@ -20,7 +23,16 @@ def home_view(request:HttpRequest):
     new_rider_request_ads = RiderRequest.objects.all().order_by('-id')
     rider_requests = new_rider_request_ads[:4]
 
-    return render(request, "main/home.html", {"rider_requests":rider_requests})
+    drivers_count = Driver.objects.count()
+    trips_count = Trip.objects.count()
+    cities_count = City.objects.count()
+
+    return render(request, "main/home.html", {
+        "rider_requests": rider_requests,
+        "drivers_count": drivers_count,
+        "trips_count": trips_count,
+        "cities_count": cities_count,
+    })
 
 #Contact view
 def contact_view(request:HttpRequest):

@@ -1,11 +1,9 @@
 {% extends "main/base.html" %}
-
 {% load static %}
 
 {% block title %}Edit Rider Profile{% endblock %}
 
 {% block content %}
-
 <div class="tp-profile-page">
     <div class="tp-shell">
         <div class="tp-inner">
@@ -17,20 +15,112 @@
                             <div class="tp-header-title">
                                 <i class="fa-solid fa-pen me-2"></i>Edit Profile
                             </div>
-                            <p class="text-muted">Update your rider information</p>
-                            </div>
+                            <p class="text-muted mb-0">Update your rider information</p>
+                        </div>
                         <div>
-                            <a href="{% url 'accounts:profile_rider' %}" class="btn
-                            btn-sm btn-secondary">
+                            <a href="{% url 'accounts:profile_rider' %}" class="btn btn-sm btn-secondary">
                                 <i class="fa-solid fa-arrow-left me-1"></i> Back to Profile
-                                </a>
-                            </div>
+                            </a>
                         </div>
                     </div>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="tp-card">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <h6 class="tp-card-title mb-3">Personal Information</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Phone Number</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                    <div class="text-danger small">{{ form.phone.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">National ID / Iqama</label>
+                                <input type="text" class="form-control" name="national_id_or_iqama" value="{{ rider.national_id_or_iqama }}" readonly>
+    
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Gender</label>
+                                    {{ form.gender }}
+                                    {% if form.gender.errors %}
+                                        <div class="text-danger small">{{ form.gender.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Date of Birth</label>
+                                    {{ form.date_of_birth }}
+                                    {% if form.date_of_birth.errors %}
+                                        <div class="text-danger small">{{ form.date_of_birth.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Car Size</label>
+                                    {{ form.size_car }}
+                                    {% if form.size_car.errors %}
+                                        <div class="text-danger small">{{ form.size_car.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">City</label>
+                                    {{ form.city }}
+                                    {% if form.city.errors %}
+                                        <div class="text-danger small">{{ form.city.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h6 class="tp-card-title mb-3">Profile Picture</h6>
+
+                            <div class="mb-3">
+                                <label class="form-label">Avatar</label>
+                                {% if rider.avatar and rider.avatar.url != '/media/images/avatars/avatar.webp' %}
+                                    <div class="mb-2">
+                                        <img src="{{ rider.avatar.url }}" alt="Current Avatar" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                        <small class="d-block text-muted">Current avatar</small>
+                                    </div>
+                                {% endif %}
+                                {{ form.avatar }}
+                                <small class="text-muted">Upload new avatar (optional)</small>
+                                {% if form.avatar.errors %}
+                                    <div class="text-danger small">{{ form.avatar.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-secondary btn-lg">
+                                    <i class="fa-solid fa-save me-2"></i>Save Changes
+                                </button>
+                                <a href="{% url 'accounts:profile_driver' %}" class="btn btn-outline-secondary">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

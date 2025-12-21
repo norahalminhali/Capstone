@@ -3,11 +3,12 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
+<script src="{% static 'js/home.js' %}"></script>
 
 <div class="hero-section">
     <div class="hero-overlay">
         <div class="hero-content">
-            <h1 class="hero-title">RIDERS</h1>
+            <h1 class="hero-title">WESAL</h1>
             <p class="hero-subtitle">Your Trusted Transport Partner in Saudi Arabia</p>
             <div class="hero-buttons">
                 <a href="{% url 'trips:all_trip_view' %}" class="btn btn-primary">Trips</a>
@@ -16,6 +17,34 @@
         </div>
     </div>
 </div>
+
+<!-- Platform Quick Stats -->
+<div class="container my-5">
+  <div class="row text-center g-4">
+    <div class="col-12 col-md-4">
+      <div class="stat-box shadow-sm rounded-4 p-4 bg-white h-100">
+        <div class="mb-2"><i class="fa-solid fa-car-side fa-2x text-warning"></i></div>
+        <div class="fs-2 fw-bold">{{ drivers_count }}</div>
+        <div class="text-muted">Registered Drivers</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="stat-box shadow-sm rounded-4 p-4 bg-white h-100">
+        <div class="mb-2"><i class="fa-solid fa-route fa-2x text-primary"></i></div>
+        <div class="fs-2 fw-bold">{{ trips_count }}</div>
+        <div class="text-muted">Created Trips</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="stat-box shadow-sm rounded-4 p-4 bg-white h-100">
+        <div class="mb-2"><i class="fa-solid fa-city fa-2x text-success"></i></div>
+        <div class="fs-2 fw-bold">{{ cities_count }}</div>
+        <div class="text-muted">Available Cities</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="rider-request-ad-section">
     <div class="rider-request-title">
         <a href="{% url 'rider_request:list_rider_request' %}">

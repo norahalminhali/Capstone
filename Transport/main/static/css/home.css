@@ -150,6 +150,46 @@
 {
     margin-right: 10px;
 }
+/* Animation for stats section */
+.stat-box { opacity: 0; transform: translateY(40px); transition: all 0.7s cubic-bezier(.4,1.4,.6,1); }
+.stat-box.stat-animate { opacity: 1; transform: translateY(0); }
+/* Animated border only at the edges */
+.stat-box {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px 0 rgba(0,0,0,0.04);
+    overflow: hidden;
+}
+ .stat-box::after {
+         content: "";
+         position: absolute;
+         top: 0; left: 0; right: 0; bottom: 0;
+         border-radius: 16px;
+         border: 3px solid transparent;
+         background: linear-gradient(270deg, #e8b008e8, #f7d5167a, #cb811fac, #e06b0bdc, #f18a03) border-box;
+         background-size: 400% 400%;
+         animation: stat-border-animate 3s linear infinite;
+         z-index: 2;
+         pointer-events: none;
+         box-sizing: border-box;
+         /* لإظهار الحد فقط وليس تعبئة */
+         -webkit-mask:
+             linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+         -webkit-mask-composite: xor;
+         mask-composite: exclude;
+}
+/* إزالة أي حدود أو تأثير داخلي للمحتوى */
+.stat-box > * {
+    position: relative;
+    z-index: 1;
+}
+@keyframes stat-border-animate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 /* Responsive */
 @media (max-width: 768px) {
     .hero-title {
