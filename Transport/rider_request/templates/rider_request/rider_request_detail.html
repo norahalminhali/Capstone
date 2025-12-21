@@ -29,6 +29,7 @@
     }
 
     .custom-card {
+        padding: 40px;
         border-radius: 18px;
         border: none;
         box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
@@ -44,10 +45,13 @@
     }
 
     .info-text {
-        color: #a3a2a2;
+        color: #827f7f;
         margin-bottom: 10px;
     }
-
+    .info-text strong
+    {
+        margin-right: 15px;
+    }
     .info-text strong {
         color: #474341;
     }
@@ -66,13 +70,11 @@
 
 {% block content %}
 
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mt-5 mb-4">
-        <h1 class="page-title">Trip Details</h1>
-    </div>
 
-    <div class="row g-4 mb-4 align-items-stretch" id="request-detail-section">
-
+<div class="d-flex justify-content-center align-items-center mt-5 mb-4">
+    <h1 class="page-title">Rider Request Details</h1>
+</div>
+<div class="container d-flex flex-row aligin-item-center justify-content-center gap-5 mb-5">
         <!-- Rider Request Detail -->
         <div class="col-lg-8" id="#request-detail">
             <div class="card custom-card" id="#request-detail">
@@ -95,6 +97,15 @@
                             <i class="fa-solid fa-trash-can me-2"></i> Delete Ad
                         </a>
                         {% endif %}
+                        <!-- إضافة شرط فقط يظهر للسائق-->
+                        {% if rider_request.status == 'pending' %}
+                            <a href="{% url 'rider_request:accept_rider_request' rider_request.id %}" class="btn btn-outline-success">
+                                Accept Request
+                            </a>
+                        {% endif %} 
+                        {% if rider_request.status == 'accept' %}
+                            <p>Accepted by: {{ rider_request.driver.user.username }}</p>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -104,21 +115,21 @@
                 <p class="info-text">
                     <strong>From:</strong>
                     {% for n in rider_request.start_neighborhood.all %}
-                    <span class="badge bg-light text-dark">{{ n.name }}</span>
+                    <span class="badge bg-warning-subtle text-warning">{{ n.name }}</span>
                     {% endfor %}
                 </p>
 
                 <p class="info-text">
                     <strong>To:</strong>
                     {% for n in rider_request.end_neighborhood.all %}
-                    <span class="badge bg-light text-dark">{{ n.name }}</span>
+                    <span class="badge bg-warning-subtle text-warning">{{ n.name }}</span>
                     {% endfor %}
                 </p>
 
                 <p class="info-text">
                     <strong>Days:</strong>
                     {% for day in rider_request.days_of_week.all %}
-                    <span class="badge bg-primary-subtle text-primary border border-primary-pill">{{ day.name }}</span>
+                    <span class="badge bg-warning-subtle text-warning border-warning-pill">{{ day.name }}</span>
                     {% endfor %}
                 </p>
 
@@ -139,7 +150,7 @@
 
                 <p class="info-text mb-0">
                     <strong>Price:</strong>
-                    <span class="price">${{ rider_request.price }}</span>
+                    <span class="price">{{ rider_request.price }} SAR</span>
                 </p>
 
             </div>
@@ -167,8 +178,6 @@
 
             </div>
         </div>
-    </div>
-
 </div>
 
 <!--

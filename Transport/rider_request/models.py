@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from drivers.models import Driver
 from riders.models import Rider
 from trips.models import Trip
 from main.models import Neighborhood
@@ -15,6 +16,7 @@ class RiderRequest (models.Model):
         P = "pending", "Pending"
 
     rider = models.ForeignKey(Rider, on_delete= models.CASCADE)
+    driver = models.ForeignKey(Driver, on_delete=models.SET_NULL, null=True, blank=True)
     accepted_trip = models.ForeignKey(Trip, on_delete= models.CASCADE, null=True, blank=True)
     city = models.ForeignKey(City, on_delete= models.CASCADE)
     days_of_week = models.ManyToManyField(Day)

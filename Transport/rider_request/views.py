@@ -64,6 +64,17 @@ def detail_rider_request(request:HttpRequest,  rider_request_id):
 
     return render(request, "rider_request/rider_request_detail.html", {'rider_request':rider_request,'rider':rider,  "comments": comments})
 
+#Allowing driver to change the request status
+def accept_rider_request(request, rider_request_id):
+    
+    rider_request = get_object_or_404(RiderRequest, id=rider_request_id)
+    rider_request.status = RiderRequest.Status.A
+    rider_request.driver = request.user.driver
+    rider_request.save()
+    
+    return redirect('rider_request:detail_rider_request', rider_request_id=rider_request_id, )
+
+
 #update the rider request ads form
 @login_required
 def update_rider_request(request, pk):
