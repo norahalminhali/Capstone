@@ -6,14 +6,14 @@
   <div class="d-flex align-items-center gap-2">
 
     {% if node.user.rider %}
-      <a href="{% url 'accounts:profile_rider' %}" class="fw-bold text-decoration-none text-dark">
+      <a href="{% url 'accounts:profile_rider' node.user.rider.id %}" class="fw-bold text-decoration-none text-dark">
         {% if node.user.rider.avatar %}
           <img src="{{ node.user.rider.avatar.url }}" class="rounded-circle avatar" width="42" height="42">
         {% endif %}
         {{ node.user.username }}
       </a>
     {% else %}
-      <a href="{% url 'accounts:profile_driver' %}" class="fw-bold text-decoration-none text-dark">
+      <a href="{% url 'accounts:profile_driver' node.user.driver.id %}" class="fw-bold text-decoration-none text-dark">
         {% if node.user.driver.avatar %}
           <img src="{{ node.user.driver.avatar.url }}" class="rounded-circle avatar" width="42" height="42">
         {% endif %}
