@@ -72,6 +72,8 @@
     }
     .profile-info-row i { margin-right: 8px; color: #ffc266; font-size: 1.2em; }
 </style>
+
+
 {% if request.user == driver.user %}
 <div class="tp-profile-page">
     <div class="tp-shell">
@@ -88,7 +90,6 @@
                                 <i class="fa-solid fa-user fa-4x text-muted" style="margin-bottom: 10px;"></i>
                             {% endif %}
                         </div>
-
 
                         <div class="tp-name" style="font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; color: #474341; letter-spacing: 0.5px;">
                             {{ driver.user.first_name }} {{ driver.user.last_name }}

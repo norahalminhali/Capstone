@@ -66,6 +66,9 @@ def contact_view(request:HttpRequest):
 #Contact message view
 def contact_message_view(request:HttpRequest):
 
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        return HttpResponseForbidden("Access Denied: You do not have the required permissions to view this page.")
+
     msg = Contact.objects.all().order_by("-created_at")
 
     return render(request, "main/message.html", {"msg":msg})
@@ -87,6 +90,8 @@ def manager_view(request: HttpRequest):
         driver_id = request.POST.get('driver_id')
         trip_id = request.POST.get('trip_id')
         
+        rejection_reason = request.POST.get('rejection_reason')
+
         if driver_id:
             driver = get_object_or_404(Driver, id=driver_id)
             
@@ -96,6 +101,7 @@ def manager_view(request: HttpRequest):
                 messages.success(request, f"Driver {driver.user.username} approved successfully!")
             elif action == "reject":
                 driver.status = 'REJECTED'
+                driver.rejection_reason = rejection_reason
                 driver.save()
                 messages.error(request, f"Driver {driver.user.username} has been rejected.")
         
@@ -107,6 +113,7 @@ def manager_view(request: HttpRequest):
             elif action == "reject":
                 trip.admin_status = 'REJECTED'
                 messages.error(request, f"Trip #{trip.id} rejected.")
+                trip.rejection_reason = rejection_reason
             trip.save()    
         
 
