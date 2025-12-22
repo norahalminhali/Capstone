@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import environ
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts',
     'trips',
     'rider_request',
+    'trip_subscription',
 ]
 
 MIDDLEWARE = [
@@ -129,6 +130,16 @@ STATIC_URL = 'static/'
 
 MEDIA_URL="/media/"
 MEDIA_ROOT= os.path.join(BASE_DIR,'media')
+
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
+
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY") 
+STRIPE_SUCCESS_URL = "http://127.0.0.1:8000/coaches/payment/success/"
+STRIPE_CANCEL_URL = "http://127.0.0.1:8000/coaches/payment/cancel/"
+
 
 #Email Settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

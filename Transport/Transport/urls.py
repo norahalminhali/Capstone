@@ -27,5 +27,6 @@ urlpatterns = [
     path('accounts/',include("accounts.urls")),
     path('trips/',include("trips.urls")),
     path('rider_request/',include("rider_request.urls")),
+    path('trip_subscription/',include("trip_subscription.urls")),
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 

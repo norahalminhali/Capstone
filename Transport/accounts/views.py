@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth.models import User
@@ -9,6 +9,7 @@ from drivers.forms import DriverForm
 from riders.forms import RiderForm
 from drivers.models import Car, CarCompany
 from main.models import City, Nationality
+from trips.models import Trip, JoinTrip
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
@@ -210,16 +211,30 @@ def profile_rider(request: HttpRequest, rider_id=None):
     عرض بروفايل أي راكب لأي مستخدم مسجّل دخول (راكب أو سائق)
     إذا لم يُحدد rider_id، يعرض بروفايل الراكب الحالي
     """
-    if rider_id:
-        try:
-            rider = Rider.objects.get(id=rider_id)
-        except Rider.DoesNotExist:
-            messages.error(request, "Rider not found.")
-            return redirect('main:home_view')
-    else:
-        # إذا لم يُحدد id، يعرض بروفايل الراكب الحالي
-        rider = request.user.rider
-    return render(request, 'accounts/profile_rider.html', {'rider': rider})
+    try:
+        if rider_id:
+            rider = Rider.objects.select_related('user').get(id=rider_id)
+        else:
+            rider = request.user.rider
+    except Rider.DoesNotExist:
+        messages.error(request, "Rider profile not found.")
+        return redirect('main:home_view')
+    except AttributeError:
+        messages.error(request, "You are not registered as a rider.")
+        return redirect('main:home_view')
+    
+    
+    joined_trips = JoinTrip.objects.select_related(
+            'trip',
+            'trip__driver',
+            'trip__city'
+        ).filter(
+            rider=rider
+        ).filter(rider=rider).order_by('-created_at')
+    has_Accepted = joined_trips.filter(rider_status='APPROVED').exists()
+    has_rejected = joined_trips.filter(rider_status='REJECTED').exists()
+
+    return render(request, 'accounts/profile_rider.html', {'rider': rider,'joined_trips':joined_trips, 'has_Accepted':has_Accepted,'has_rejected':has_rejected})
 
 @login_required
 def edit_rider_profile(request: HttpRequest):
