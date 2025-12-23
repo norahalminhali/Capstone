@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth.models import User
+from trip_subscription.models import TripSubscription
 from riders.models import Rider
 from drivers.models import Driver
 from django.contrib import messages
@@ -224,9 +225,11 @@ def profile_driver(request: HttpRequest, driver_id=None):
         return render(request, '404.html', status=404)  # ⭐
     except AttributeError:
         return render(request, '403.html', status=403)  # ⭐
-
+ 
     car = driver.car if hasattr(driver, 'car') else None
-    return render(request, 'accounts/profile_driver.html', {'driver': driver, 'car': car})
+    # جلب جميع الرحلات التي أنشأها السائق
+    trips = driver.trips.all().order_by('-created_at')
+    return render(request, 'accounts/profile_driver.html', {'driver': driver, 'car': car, 'trips': trips})
 
 
 @login_required
@@ -268,23 +271,21 @@ def profile_rider(request: HttpRequest, rider_id=None):
         return render(request, '403.html', status=403)  # ⭐
 
     joined_trips = JoinTrip.objects.select_related(
-        'trip', 'trip__driver', 'trip__city'
-    ).filter(rider=rider).order_by('-created_at')
-
-    has_Accepted = joined_trips.filter(rider_status='APPROVED').exists()
+            'trip',
+            'trip__driver',
+            'trip__city'
+        ).filter(
+            rider=rider
+        ).order_by('-created_at')
+    
+    subscriptions = TripSubscription.objects.filter(
+            rider=rider
+        ).values_list('join_trip_id', flat=True)
+    
+    
     has_rejected = joined_trips.filter(rider_status='REJECTED').exists()
 
-    return render(
-        request,
-        'accounts/profile_rider.html',
-        {
-            'rider': rider,
-            'joined_trips': joined_trips,
-            'has_Accepted': has_Accepted,
-            'has_rejected': has_rejected
-        }
-    )
-
+    return render(request, 'accounts/profile_rider.html', {'rider': rider,'joined_trips':joined_trips,'has_rejected':has_rejected, 'subscriptions':subscriptions, 'joined_trips':joined_trips})
 
 @login_required
 def edit_rider_profile(request: HttpRequest):
@@ -296,7 +297,7 @@ def edit_rider_profile(request: HttpRequest):
         if rider_form.is_valid():
             rider_form.save()
             messages.success(request, 'Profile updated successfully!', "alert-success")
-            return redirect('accounts:profile_rider', rider_id=rider.id)
+            return redirect('accounts:profile_rider')
         else:
             messages.error(request, 'Please correct the errors below.', "alert-danger")
     else:

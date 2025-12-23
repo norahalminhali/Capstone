@@ -72,6 +72,8 @@
     }
     .profile-info-row i { margin-right: 8px; color: #ffc266; font-size: 1.2em; }
 </style>
+
+
 {% if request.user == driver.user %}
 <div class="tp-profile-page">
     <div class="tp-shell">
@@ -88,7 +90,6 @@
                                 <i class="fa-solid fa-user fa-4x text-muted" style="margin-bottom: 10px;"></i>
                             {% endif %}
                         </div>
-
 
                         <div class="tp-name" style="font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; color: #474341; letter-spacing: 0.5px;">
                             {{ driver.user.first_name }} {{ driver.user.last_name }}
@@ -306,6 +307,34 @@
                         <div class="tab-pane fade" id="trips">
                             <div class="tp-card">
                                 <h6 class="tp-card-title">Trip History</h6>
+                                {% if trips and trips.count > 0 %}
+                                    <ul class="list-group">
+                                        {% for trip in trips %}
+                                            <li class="list-group-item">
+                                                <strong>{{ trip.start_date }} - {{ trip.end_date }}</strong>
+                                                <br>
+                                                {{ trip.city.name }}
+                                                <br>
+                                                {{ trip.price }} SAR
+                                                <br>
+                                                الحالة: {{ trip.get_admin_status_display }}
+                                                <a href="{% url 'trips:trip_detail_view' trip.id %}" class="btn btn-sm btn-outline-primary ms-2">Details</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p class="tp-empty-text">
+                                        No trips available yet. Trip history will appear here once you complete your first ride.
+                                    </p>
+                                {% endif %}
+                                
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="tp-card-title">Trip History</h6>
+                                    <a href="{% url 'trips:create_trip_view' %}" class="btn btn-sm" style="background: linear-gradient(135deg, #f2c235 0%, #f8d66d 100%); color: #474341; border: none; padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; font-weight: 500;">
+                                        + Create Trip
+                                    </a>
+                                </div>
+                                
                                 <p class="tp-empty-text">
                                     No trips available yet. Trip history will appear here once you complete your first ride.
                                 </p>
