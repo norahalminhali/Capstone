@@ -4,207 +4,294 @@
 
 {% block style %}
 <style>
-    .page-title
-    {
-        margin-top: 30px;
-        margin-bottom: 20px;
-        font-weight: 700;
-        color: #474341;
-        text-align: center;
+  
+    .page-title {
+        margin-top: 30px; 
+        margin-bottom: 20px; 
+        font-weight: 700; 
+        color: #474341; 
+        text-align: center; 
     }
-    h3
-    {
-        width: 100%;
-        display: block;
-        color: #474341;
-        align-items: center;
-        margin-bottom: 20px;
-        margin-top: 40px;
-        padding-left: 20px;
+    h3 { 
+        width: 100%; 
+        display: block; 
+        color: #474341; 
+        margin-bottom: 20px; 
+        margin-top: 40px; 
+        padding-left: 20px; 
     }
-    .section-title {
+    .section-title { 
+        border-bottom: 2px solid #f2c235; 
+        padding-bottom: 8px; 
+        margin-bottom: 20px; 
+    }
+    table img { 
+        width: 120px; 
+        height: auto; 
+        border: 1px double #474341; 
+        border-radius: 5px;
+    }
 
-        border-bottom: 2px solid #f2c235;
-        padding-bottom: 8px;
-        margin-bottom: 20px;
-    }
-    .section-title th
-    {
-        font-weight: 600;
-        font-size: large;
-        color: #474341;        
-    }
-    table img
-    {
-        width: 150px;
-        height: 90px;
-        border: 1px double #474341;
+    @media (max-width: 992px) {
+      
+        .table-custom-responsive thead { 
+            display: none; 
+        }
+        
+    
+        .table-custom-responsive tbody tr { 
+            display: block; 
+            margin-bottom: 1.5rem; 
+            border: 1px solid #dee2e6; 
+            border-radius: 12px; 
+            padding: 15px; 
+            background: #fff; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07); 
+        }
+
+       
+        .table-custom-responsive tbody td { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: none; 
+            padding: 10px 5px; 
+            border-bottom: 1px dashed #eee; 
+            text-align: right;
+        }
+
+     
+        .table-custom-responsive tbody td::before { 
+            content: attr(data-label); 
+            font-weight: bold; 
+            color: #6c757d; 
+            font-size: 0.85rem; 
+            text-transform: uppercase;
+            text-align: left;
+            margin-right: 15px;
+        }
+
+       
+        .table-custom-responsive tbody td:last-child { 
+            border-bottom: none; 
+            justify-content: center; 
+            background: #f8f9fa; 
+            margin-top: 15px; 
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .table-custom-responsive tbody td:last-child::before {
+            display: none; 
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column justify-content-center align-items-center mt-5 mb-4">
-    <h1 class="page-title">Manager Dashboard</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 text-center mt-5 mb-4">
+            <h1 class="page-title">Manager Dashboard</h1>
+        </div>
+    </div>
+
+    <div class="row px-3">
+        <h3><i class="fa-solid fa-list text-warning"></i> Drivers Pending List</h3>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle table-custom-responsive">
+                <thead class="section-title">
+                    <tr>
+                        <th>Driver Name</th>
+                        <th>ID card</th>
+                        <th>Gender</th>
+                        <th>Date of birth</th>
+                        <th>Nationality</th>
+                        <th>Phone</th>
+                        <th>Licenses</th>
+                        <th>Car Registration</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for driver in drivers %}
+                    <tr>
+                        <td data-label="Driver Name">{{ driver.user.username }}</td>
+                        <td data-label="ID card">{{ driver.national_id_or_iqama }}</td>
+                        <td data-label="Gender">{{ driver.gender }}</td>
+                        <td data-label="Date of birth">{{ driver.date_of_birth }}</td>
+                        <td data-label="Nationality">{{ driver.nationality }}</td>
+                        <td data-label="Phone">{{ driver.phone }}</td>
+                        <td data-label="Licenses">
+                            {% if driver.licenses %}<img src="{{ driver.licenses.url }}" alt="License">{% endif %}
+                        </td>
+                        <td data-label="Car Registration">
+                            {% if driver.car_registration %}<img src="{{ driver.car_registration.url }}" alt="Car Reg">{% endif %}
+                        </td>
+                        <td data-label="Action">
+                            <div class="d-flex gap-2">
+                                <form action="" method="POST" class="m-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="driver_id" value="{{ driver.id }}">
+                                    <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectDriverModal{{ driver.id }}">
+                                    Reject
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="9" class="text-center py-5 text-muted">No drivers pending.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav class="mt-2">
+        <ul class="pagination pagination-sm justify-content-center">
+            {% if drivers.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page_drivers={{ drivers.previous_page_number }}&page_trips={{ trips.number }}">Previous</a></li>
+            {% endif %}
+            <li class="page-item disabled"><span class="page-link">Page {{ drivers.number }} of {{ drivers.paginator.num_pages }}</span></li>
+            {% if drivers.has_next %}
+                <li class="page-item"><a class="page-link" href="?page_drivers={{ drivers.next_page_number }}&page_trips={{ trips.number }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <hr class="my-5">
+
+    <div class="row px-3">
+        <h3><i class="fa-solid fa-list text-warning"></i> Trips Pending List</h3>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle table-custom-responsive">
+                <thead class="section-title">
+                    <tr>
+                        <th>Driver</th>
+                        <th>City</th>
+                        <th>From/To</th>
+                        <th>Days</th>
+                        <th>Date/Time</th>
+                        <th>Seats</th>
+                        <th>Price</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trip in trips %}
+                    <tr>
+                        <td data-label="Driver">{{ trip.driver.user.username }}</td>
+                        <td data-label="City">{{ trip.city.name }}</td>
+                        <td data-label="Route">
+                            {{ trip.start_neighborhood.all|join:", " }} <br> 
+                            <i class="fa-solid fa-arrow-right text-warning d-lg-none"></i>
+                            {{ trip.end_neighborhood.all|join:", " }}
+                        </td>
+                        <td data-label="Days">{{ trip.days_of_week.all|join:", " }}</td>
+                        <td data-label="Schedule">{{ trip.start_date }} - {{ trip.start_time }}</td>
+                        <td data-label="Seats">{{ trip.total_riders }}</td>
+                        <td data-label="Price">{{ trip.price }}</td>
+                        <td data-label="Action">
+                            <div class="d-flex gap-2">
+                                <form action="" method="POST" class="m-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="trip_id" value="{{ trip.id }}">
+                                    <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectModal{{ trip.id }}">
+                                    Reject
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="8" class="text-center py-5 text-muted">No trips pending.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav class="mt-2 mb-5">
+        <ul class="pagination pagination-sm justify-content-center">
+            {% if trips.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page_trips={{ trips.previous_page_number }}&page_drivers={{ drivers.number }}">Previous</a></li>
+            {% endif %}
+            <li class="page-item disabled"><span class="page-link">Page {{ trips.number }} of {{ trips.paginator.num_pages }}</span></li>
+            {% if trips.has_next %}
+                <li class="page-item"><a class="page-link" href="?page_trips={{ trips.next_page_number }}&page_drivers={{ drivers.number }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
 </div>
-<div class="">
-    <h3>
-        <i class="fa-solid fa-list text-warning"></i>
-        Drivers Pending List
-    </h3>     
-</div> 
-<div class="container-fluid d-flex flex-row align-items-center justify-content-center gap-5 mb-5">
 
-    <table class="table table-hover align-middle">
-        <thead class="section-title">
-            <tr>
-                <th>Driver Name</th>
-                <th>ID card</th>
-                <th>Gender</th>
-                <th>Date of birth</th>
-                <th>Nationality</th>
-                <th>Phone</th>
-                <th>Licenses</th>
-                <th>Car Registration</th>
-                <th class="text-center">Action</th> </tr>
-        </thead>
-        <tbody>
-            {% for driver in drivers %}
-            <tr>
-                <td>{{ driver.user.username }}</td>
-                <td>{{ driver.national_id_or_iqama }}</td>
-                <td>{{ driver.gender }}</td>
-                <td>{{ driver.date_of_birth }}</td>
-                <td>{{ driver.nationality }}</td>
-                <td>{{ driver.phone }}</td>
-                <td>
-                    {% if driver.licenses %}
-                    <img src="{{ driver.licenses.url }}" alt="License">
-                    {% endif %}
-                </td>
-                <td>
-                    {% if driver.car_registration %}
-                    <img src="{{ driver.car_registration.url }}" alt="Car Reg">
-                    {% endif %}
-                </td>
-                <td>
-                    <div class="d-flex gap-2 justify-content-center">
-                        <form action="" method="POST">
-                            {% csrf_token %}
-                            <input type="hidden" name="driver_id" value="{{ driver.id }}">
-                            <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Approve</button>
-                        </form>
-
-                        <form action="" method="POST">
-                            {% csrf_token %}
-                            <input type="hidden" name="driver_id" value="{{ driver.id }}">
-                            <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
-                        </form>
+{% for driver in drivers %}
+<div class="modal fade" id="rejectDriverModal{{ driver.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Reject Driver: {{ driver.user.username }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-start">
+                    <input type="hidden" name="driver_id" value="{{ driver.id }}">
+                    <input type="hidden" name="action" value="reject">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Reason for rejection:</label>
+                        <textarea class="form-control" name="rejection_reason" rows="4" required placeholder="Write the reason here..."></textarea>
                     </div>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="9" style="text-align: center; padding: 40px;">
-                    <p class="text-muted">There are no drivers currently in the pending list.</p>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table> 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm Reject</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-<!-- ترقيم الصفحات -->
-<nav class="mt-3">
-    <ul class="pagination pagination-sm justify-content-center">
-        {% if drivers.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page_drivers={{ drivers.previous_page_number }}&page_trips={{ trips.number }}">Previous</a></li>
-        {% endif %}
-        
-        <li class="page-item disabled"><span class="page-link">Page {{ drivers.number }} of {{ drivers.paginator.num_pages }}</span></li>
+{% endfor %}
 
-        {% if drivers.has_next %}
-            <li class="page-item"><a class="page-link" href="?page_drivers={{ drivers.next_page_number }}&page_trips={{ trips.number }}">Next</a></li>
-        {% endif %}
-    </ul>
-</nav>
-<!-- إضافة حالة طلب الرحلات -->
- <div class="">
-    <h3>
-        <i class="fa-solid fa-list text-warning"></i>
-        Trips Pending List
-    </h3>     
-</div> 
-<div class="container-fluid d-flex flex-row align-items-center justify-content-center gap-5 mb-5">
-
-    <table class="table table-hover align-middle">
-        <thead class="section-title">
-            <tr>
-                <th>Driver Name</th>
-                <th>City</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Days</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Available Seats</th>
-                <th>Price</th>
-                <th class="text-center">Action</th> </tr>
-        </thead>
-        <tbody>
-            {% for trip in trips %}
-            <tr>
-                <td>{{ trip.driver.user.username }}</td>
-                <td>{{ trip.city.name }}</td>
-                <td>
-                    {% for n in trip.start_neighborhood.all %}{{ n.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                </td>
-                <td>
-                    {% for n in trip.end_neighborhood.all %}{{ n.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                </td>
-                <td>
-                    {% for day in trip.days_of_week.all %}{{ day.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                </td>
-                <td>{{ trip.start_date }} – {{ trip.end_date }}</td>
-                <td>{{ trip.start_time }} – {{ trip.end_time }}</td>
-                <td>{{ trip.total_riders }}</td>
-                <td>{{ trip.price }}</td>
-                <td>
-                    <div class="d-flex gap-2 justify-content-center">
-                        <form action="" method="POST">
-                            {% csrf_token %}
-                            <input type="hidden" name="trip_id" value="{{ trip.id }}">
-                            <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Approve</button>
-                        </form>
-
-                        <form action="" method="POST">
-                            {% csrf_token %}
-                            <input type="hidden" name="trip_id" value="{{ trip.id }}">
-                            <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
-                        </form>
+{% for trip in trips %}
+<div class="modal fade" id="rejectModal{{ trip.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Reject Trip #{{ trip.id }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-start">
+                    <input type="hidden" name="trip_id" value="{{ trip.id }}">
+                    <input type="hidden" name="action" value="reject">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Reason for rejection:</label>
+                        <textarea class="form-control" name="rejection_reason" rows="4" required placeholder="Write the reason here..."></textarea>
                     </div>
-                </td> 
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="10" style="text-align: center; padding: 40px;">
-                    <p class="text-muted">There are no trips currently in the pending list.</p>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table> 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm Reject</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-<nav class="mt-3">
-    <ul class="pagination pagination-sm justify-content-center">
-        {% if trips.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page_trips={{ trips.previous_page_number }}&page_drivers={{ drivers.number }}">Previous</a></li>
-        {% endif %}
-        
-        <li class="page-item disabled"><span class="page-link">Page {{ trips.number }} of {{ trips.paginator.num_pages }}</span></li>
+{% endfor %}
 
-        {% if trips.has_next %}
-            <li class="page-item"><a class="page-link" href="?page_trips={{ trips.next_page_number }}&page_drivers={{ drivers.number }}">Next</a></li>
-        {% endif %}
-    </ul>
-</nav>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var modals = document.querySelectorAll('.modal');
+        modals.forEach(function(modal) {
+            document.body.appendChild(modal);
+        });
+    });
+</script>
 {% endblock %}

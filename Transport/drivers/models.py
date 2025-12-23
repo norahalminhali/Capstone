@@ -59,6 +59,9 @@ class Driver (models.Model):
     rating = models.SmallIntegerField(choices=RatingChoices.choices ,default=RatingChoices.STAR5)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
 
+    #تم إضافته لتخزين محتوى سبب رفض الإعلان للسائق عند إنشاء حساب
+    rejection_reason = models.TextField(blank=True, null=True, verbose_name="Rejection Reason")
+
 
 
 class ReviewDriver(models.Model):

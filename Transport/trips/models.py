@@ -28,6 +28,9 @@ class Trip (models.Model):
     is_private = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     admin_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    
+    #تم إضافته لتخزين محتوى سبب رفض الإعلان للسائق عند إنشاء رحلة
+    rejection_reason = models.TextField(blank=True, null=True, verbose_name="Rejection Reason")
 
 
 class JoinTrip (models.Model):
