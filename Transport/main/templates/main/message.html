@@ -2,43 +2,106 @@
 
 {% block style %}
 <style>
-    .page-title
-    {
-        margin-top: 30px;
-        margin-bottom: 20px;
-        font-weight: 700;
-        color: #474341;
+    html, body {
+        height: 100%;
+    }
+    body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    main {
+        flex: 1 0 auto;
+    }
+    footer {
+        flex-shrink: 0;
+        width: 100%;
+    }
+    .page-title {
+        margin-top: 36px;
+        margin-bottom: 32px;
+        font-weight: 800;
+        color: #19335c;
         text-align: center;
+        letter-spacing: 1.2px;
+        font-size: 2.2rem;
+    }
+    .messages-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.1rem;
+        margin-bottom: 1.2rem;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .message-card {
+        background: #f4f8fb;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(10,35,66,0.10);
+        padding: 2rem 1.3rem 1.3rem 1.3rem;
+        display: flex;
+        flex-direction: column;
+        min-height: 220px;
+        border: 1.5px solid #e3e8f7;
+        transition: box-shadow 0.2s;
+    }
+    .message-card:hover {
+        box-shadow: 0 12px 36px rgba(25,51,92,0.13);
+        border-color: #b3b8e7;
+    }
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.7rem;
+    }
+    .message-name {
+        color: #274472;
+        font-weight: 700;
+        font-size: 1.15rem;
+        margin-bottom: 0;
+    }
+    .message-email {
+        color: #b3b8e7;
+        font-size: 0.98rem;
+        font-weight: 500;
+    }
+    .message-date {
+        color: #a3a2a2;
+        font-size: 0.93rem;
+        text-align: end;
+        margin-top: 1.2rem;
+    }
+    .message-text {
+        color: #19335c;
+        font-size: 1.08rem;
+        margin-bottom: 0.5rem;
+        min-height: 60px;
+    }
+    @media (max-width: 600px) {
+        .page-title { font-size: 1.3rem; }
+        .messages-grid { gap: 1rem; }
+        .message-card { padding: 1.1rem 0.7rem; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container py-4">
-    <div class="row">
-        <div class="col-12 pt-3">
-            <h1 class="mb-4 page-title">Contact Messages</h1>
-            
-            <div class="row g-4"> 
-                {% for contact in msg %}
-                
-                <div class="col-12 col-md-6 col-lg-4"> 
-                    <div class="card h-100 shadow-sm p-3">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h5 class="text-warning mb-0">{{ contact.first_name }}</h5>
-                            <small class="text-muted">{{ contact.email }}</small>
-                        </div>
-                        <hr>
-                        <p class="card-text">{{ contact.message }}</p>
-                        <div class="mt-auto">
-                            <small class="text-muted d-block text-end">{{ contact.created_at }}</small>
-                        </div>
-                    </div>
-                </div>
-
-                {% endfor %}
+    <h1 class="page-title">Contact Messages</h1>
+    <div class="messages-grid">
+        {% for contact in msg %}
+        <div class="message-card">
+            <div class="message-header">
+                <span class="message-name">{{ contact.first_name }}</span>
+                <span class="message-email">{{ contact.email }}</span>
             </div>
+            <hr style="border-color:#e3e8f7; margin: 0.5rem 0 1rem 0;">
+            <div class="message-text">{{ contact.message }}</div>
+            <div class="message-date">{{ contact.created_at }}</div>
         </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
