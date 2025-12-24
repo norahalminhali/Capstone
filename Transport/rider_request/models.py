@@ -32,7 +32,7 @@ class RiderRequest (models.Model):
     status = models.CharField(max_length=8, choices=Status.choices, default=Status.P)
     
     def __str__(self):
-        return self.rider.user
+        return self.rider.user.username
 
 class JoinRequestTrip (models.Model):
     
@@ -47,7 +47,7 @@ class JoinRequestTrip (models.Model):
     rider_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
 
     def __str__(self):
-        return self.rider.user
+        return self.rider.user.username
 
 
 class CommentRiderRequest (models.Model):

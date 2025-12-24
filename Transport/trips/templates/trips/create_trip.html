@@ -83,19 +83,17 @@
 
                             <div class="mb-3 ">
                                 <label class="form-label d-block text-end  ">Start Neighborhood *</label>
-
                                 <div class="dropdown w-100 text-start chocie-form">
-                                    <button class="form-select w-100 text-end" type="button"
+                                    <button id="startNeighborhoodBtn" class="form-select w-100 text-end" type="button"
                                         data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                                        Start Neighborhood
+                                        Select Start Point
                                     </button>
-
                                     <ul class="dropdown-menu w-100 p-2 text-end">
                                         {% for n in neighborhoods %}
                                         <li class="mb-1">
                                             <label class="d-flex align-items-center justify-content-between">
                                                 <span class="ms-2">{{ n.name }}</span>
-                                                <input class="form-check-input" type="checkbox"
+                                                <input class="form-check-input start-neighborhood-checkbox" type="checkbox"
                                                     name="start_neighborhood" value="{{ n.id }}">
                                             </label>
                                         </li>
@@ -107,19 +105,17 @@
 
                             <div class="mb-3">
                                 <label class="form-label d-block text-end">End Neighborhood *</label>
-
                                 <div class="dropdown w-100 text-end chocie-form">
-                                    <button class="form-select w-100 text-end" type="button"
+                                    <button id="endNeighborhoodBtn" class="form-select w-100 text-end" type="button"
                                         data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                                        End Neighborhood
+                                        Select End Point
                                     </button>
-
                                     <ul class="dropdown-menu w-100 p-2 ">
                                         {% for n in neighborhoods %}
                                         <li class="mb-1">
                                             <label class="d-flex align-items-center justify-content-between">
                                                 <span class="ms-2">{{ n.name }}</span>
-                                                <input class="form-check-input" type="checkbox" name="end_neighborhood"
+                                                <input class="form-check-input end-neighborhood-checkbox" type="checkbox" name="end_neighborhood"
                                                     value="{{ n.id }}">
                                             </label>
                                         </li>
@@ -127,7 +123,6 @@
                                     </ul>
                                 </div>
                             </div>
-
 
                             <div class="mb-3">
                                 <label class="form-label d-block text-end">Days of Week *</label>
@@ -189,6 +184,45 @@
         </div>
     </div>
 </div>
+<script>
+// Show selected neighborhoods inside the dropdown button for start and end neighborhoods
+document.addEventListener('DOMContentLoaded', function () {
+    // Start Neighborhood
+    const startBtn = document.getElementById('startNeighborhoodBtn');
+    const startCheckboxes = document.querySelectorAll('.start-neighborhood-checkbox');
+    const startPlaceholder = 'Start Neighborhood';
+    function updateStartBtn() {
+        const selected = [];
+        startCheckboxes.forEach(cb => {
+            if (cb.checked) {
+                const text = cb.closest('label').querySelector('span').textContent.trim();
+                selected.push(text);
+            }
+        });
+        startBtn.textContent = selected.length > 0 ? selected.join('، ') : startPlaceholder;
+    }
+    startCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateStartBtn);
+    });
 
+    // End Neighborhood
+    const endBtn = document.getElementById('endNeighborhoodBtn');
+    const endCheckboxes = document.querySelectorAll('.end-neighborhood-checkbox');
+    const endPlaceholder = 'End Neighborhood';
+    function updateEndBtn() {
+        const selected = [];
+        endCheckboxes.forEach(cb => {
+            if (cb.checked) {
+                const text = cb.closest('label').querySelector('span').textContent.trim();
+                selected.push(text);
+            }
+        });
+        endBtn.textContent = selected.length > 0 ? selected.join('، ') : endPlaceholder;
+    }
+    endCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateEndBtn);
+    });
+});
+</script>
 
 {% endblock %}

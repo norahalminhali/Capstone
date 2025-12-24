@@ -218,8 +218,8 @@ def sign_in(request: HttpRequest):
 
         if user is not None:
             login(request, user)
-
-    #  حماية من open redirect
+            messages.success(request, f"Welcome back {user.first_name or user.last_name}! You have successfully logged in.", "alert-success")
+            #  حماية من open redirect
             if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
                 return redirect(next_url)  
 

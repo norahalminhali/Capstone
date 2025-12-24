@@ -1,3 +1,30 @@
+.hero-content {
+    margin-top: 12.5rem;
+}
+/* Sticky footer for all pages */
+html, body {
+    height: 100%;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+main, .container.py-5 {
+    flex: 1 0 auto;
+}
+footer {
+    flex-shrink: 0;
+    width: 100%;
+    background: #222b4c;
+    color: #fff;
+    text-align: center;
+    padding: 1.2rem 0 0.7rem 0;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+}
 /* ======1 Features Section Animation & Style ====== */
 .feature-box {
     opacity: 0;
@@ -218,15 +245,23 @@
     height: fit-content;
     padding-top: 50px;
     padding-bottom: 50px;
-    background-color: #f8f7f5;
+    background: none !important;
+    background-color: transparent !important;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    
 }
 .rider-request-title
 {
     width: 90%;
+    border-bottom: 2.5px solid #274472;
+    margin: 0 auto 1.5rem auto;
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .rider-request-title a
 {
@@ -235,9 +270,31 @@
 }
 .rider-request-title h1 {
     text-align: center;
-    color: #333;
-    padding: 20px;
-    margin: 20px;
+    color: #181818;
+    padding: 18px 10px 12px 10px;
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+@media (max-width: 767px) {
+    .rider-request-title {
+        width: 98%;
+        padding-bottom: 0.3rem;
+        margin-bottom: 1.2rem;
+    }
+    .rider-request-title h1 {
+        font-size: 1rem;
+        padding: 7px 2px 6px 2px;
+        gap: 0.25rem;
+    }
+    .rider-request-title i {
+        font-size: 0.85rem;
+        margin-left: 0.2rem;
+    }
 }
 .card-content
 {
@@ -589,6 +646,37 @@
         font-size: 3.3rem !important;
         margin-bottom: 1.1rem !important;
         padding-left: 2rem !important;
+    }
+}
+@media (max-width: 991px) {
+    .row.g-4 {
+        justify-content: center !important;
+    }
+    .col-md-6.col-lg-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        display: flex;
+        justify-content: center;
+    }
+    .card-content, .card {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+@media (max-width: 767px) {
+    .row.g-4 {
+        justify-content: center !important;
+    }
+    .col-md-6.col-lg-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    .card-content, .card {
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1.5rem;
     }
 }
 

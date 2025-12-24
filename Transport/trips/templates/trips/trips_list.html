@@ -6,7 +6,7 @@
 {% block content %}
 <style>
     body {
-        background: linear-gradient(135deg, #f8f7f5 0%, #f8e7c57d 90%);
+        background: linear-gradient(135deg, #f8f7f5 0%, #1c3bb77d 90%);
     }
 
     .trip-card {
@@ -22,7 +22,7 @@
     }
 
     .trip-header {
-        background: #474341;
+        background: #414347;
         color: white;
         padding: 15px 20px;
     }
@@ -39,7 +39,7 @@
 
     .badge-custom {
         background-color: #f1f3f5;
-        color: #333;
+        color: #333333;
         margin-right: 5px;
         margin-bottom: 5px;
         font-size: 14px;
@@ -76,9 +76,66 @@
     color: #acacac;
     cursor: not-allowed;
 }
+    .trips-animated-circle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.18;
+        z-index: 1;
+        pointer-events: none;
+        background: radial-gradient(circle at 30% 30%, #3949ab 0%, #7c8eea 60%, #e3e8f7 100%);
+        animation: floatY 5s ease-in-out infinite alternate;
+        filter: blur(0.5px) saturate(1.2);
+        box-shadow: 0 0 60px 20px #3949ab33;
+        transition: opacity 0.3s;
+    }
+.trips-circle-1 {
+    width: 260px;
+    height: 260px;
+    top: 10px;
+    left: -80px;
+    animation-delay: 0s;
+}
+.trips-circle-2 {
+    width: 180px;
+    height: 180px;
+    bottom: 40px;
+    right: -60px;
+    animation-delay: 1.5s;
+}
+.trips-circle-3 {
+    width: 130px;
+    height: 130px;
+    top: 55%;
+    left: 65%;
+    animation-delay: 2.5s;
+}
+@media (max-width: 767px) {
+    .trips-circle-1 {
+        width: 120px;
+        height: 120px;
+        top: 10px;
+        left: -20px;
+    }
+    .trips-circle-2 {
+        width: 90px;
+        height: 90px;
+        bottom: 18px;
+        right: -15px;
+    }
+    .trips-circle-3 {
+        width: 60px;
+        height: 60px;
+        top: 70%;
+        left: 60%;
+    }
+}
 </style>
 
-<div class="container py-5">
+<div class="container py-5 position-relative">
+    <!-- Animated Background Circles -->
+    <span class="trips-animated-circle trips-circle-1"></span>
+    <span class="trips-animated-circle trips-circle-2"></span>
+    <span class="trips-animated-circle trips-circle-3"></span>
     <div class="mb-5">
         <h2 class="fw-bold">Available Trips</h2>
         <p class="text-muted">Choose the trip that fits you best</p>

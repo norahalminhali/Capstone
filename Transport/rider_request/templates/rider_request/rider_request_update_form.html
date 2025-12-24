@@ -67,37 +67,52 @@
                                 </select>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Start Neighborhood *</label>
-                                <select name="start_neighborhood" class="form-select" multiple required>
-                                    {% for n in neighborhoods %}
-                                    <option value="{{ n.id }}" {% if n in rider_request.start_neighborhood.all %}selected{% endif %}>
-                                        {{ n.name }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
+                            <!--start -->
+                            <div class="mb-3 d-flex gap-3 flex-wrap">
+                                <div class="flex-fill" style="min-width:220px;">
+                                    <label class="form-label d-block text-end">Start Neighborhood *</label>
+                                    <div class="dropdown w-100 text-start chocie-form">
+                                        <button class="form-select w-100 text-end" type="button"
+                                            data-bs-toggle="dropdown" data-bs-auto-close="outside" id="startNeighborhoodDropdownBtn">
+                                            <span id="startNeighborhoodSelected">Start Neighborhood</span>
+                                        </button>
+                                        <ul class="dropdown-menu w-100 p-2 text-end" id="startNeighborhoodMenu">
+                                            <!-- JS will fill -->
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="flex-fill" style="min-width:220px;">
+                                    <label class="form-label d-block text-end">End Neighborhood *</label>
+                                    <div class="dropdown w-100 text-end chocie-form">
+                                        <button class="form-select w-100 text-end" type="button"
+                                            data-bs-toggle="dropdown" data-bs-auto-close="outside" id="endNeighborhoodDropdownBtn">
+                                            <span id="endNeighborhoodSelected">End Neighborhood</span>
+                                        </button>
+                                        <ul class="dropdown-menu w-100 p-2 text-end" id="endNeighborhoodMenu">
+                                            <!-- JS will fill -->
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="mb-4">
-                                <label class="form-label">End Neighborhood *</label>
-                                <select name="end_neighborhood" class="form-select" multiple required>
-                                    {% for n in neighborhoods %}
-                                    <option value="{{ n.id }}" {% if n in rider_request.end_neighborhood.all %}selected{% endif %}>
-                                        {{ n.name }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                       
 
+                            <!-- Days as checkboxes in a styled box -->
                             <div class="mb-4">
                                 <label class="form-label">Days of Week *</label>
-                                <select name="days_of_week" class="form-select" multiple required>
-                                    {% for day in days %}
-                                    <option value="{{ day.id }}" {% if day in rider_request.days_of_week.all %}selected{% endif %}>
-                                        {{ day.name }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
+                                <div style="background: #f6f8ff; border: 1.5px solid #dbe3fa; border-radius: 12px; padding: 0.7rem 1rem;">
+                                    <div class="d-flex flex-nowrap gap-2 align-items-center justify-content-center days-row-flex">
+                                        {% for day in days %}
+                                        <div class="form-check p-0 m-0 text-center" style="min-width: 60px;">
+                                            <input type="checkbox" name="days_of_week" id="day_{{ day.id }}" value="{{ day.id }}" style="width: 18px !important; height: 18px !important; min-width: 18px; min-height: 18px; margin-bottom: 2px; vertical-align: middle;">
+                                            <label class="form-check-label small d-block" for="day_{{ day.id }}" style="font-size: .92em; padding-left: 1px;">
+                                                {{ day.name|slice:":3" }}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <small class="text-muted">You can select more than one day</small>
                             </div>
 
                             <div class="row mb-3">
@@ -126,4 +141,107 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const citySelect = document.querySelector('select[name="city"]');
+    const startNeighborhoodMenu = document.getElementById('startNeighborhoodMenu');
+    const startNeighborhoodSelected = document.getElementById('startNeighborhoodSelected');
+    const endNeighborhoodMenu = document.getElementById('endNeighborhoodMenu');
+    const endNeighborhoodSelected = document.getElementById('endNeighborhoodSelected');
+
+    function showLoading(menu) {
+        if (menu) menu.innerHTML = '<li class="text-center text-muted">جاري التحميل...</li>';
+    }
+    function showError(menu, msg) {
+        if (menu) menu.innerHTML = `<li class=\"text-danger text-center\">${msg}</li>`;
+    }
+
+    function updateNeighborhoods(cityId) {
+        showLoading(startNeighborhoodMenu);
+        showLoading(endNeighborhoodMenu);
+        fetch(`/rider_request/api/neighborhoods/?city_id=${cityId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                // Start Neighborhoods
+                startNeighborhoodMenu.innerHTML = '';
+                if (data.neighborhoods && data.neighborhoods.length > 0) {
+                    data.neighborhoods.forEach(function(n) {
+                        const li = document.createElement('li');
+                        li.className = 'mb-1';
+                        li.innerHTML = `<label class=\"d-flex align-items-center justify-content-between\"><span class=\"ms-2\">${n.name}</span><input class=\"form-check-input\" type=\"checkbox\" name=\"start_neighborhood\" value=\"${n.id}\" style=\"width:16px;height:16px;min-width:16px;min-height:16px;\"></label>`;
+                        startNeighborhoodMenu.appendChild(li);
+                    });
+                } else {
+                    showError(startNeighborhoodMenu, 'No neighborhoods found');
+                }
+                // End Neighborhoods
+                endNeighborhoodMenu.innerHTML = '';
+                if (data.neighborhoods && data.neighborhoods.length > 0) {
+                    data.neighborhoods.forEach(function(n) {
+                        const li = document.createElement('li');
+                        li.className = 'mb-1';
+                        li.innerHTML = `<label class=\"d-flex align-items-center justify-content-between\"><span class=\"ms-2\">${n.name}</span><input class=\"form-check-input\" type=\"checkbox\" name=\"end_neighborhood\" value=\"${n.id}\" style=\"width:16px;height:16px;min-width:16px;min-height:16px;\"></label>`;
+                        endNeighborhoodMenu.appendChild(li);
+                    });
+                } else {
+                    showError(endNeighborhoodMenu, 'No neighborhoods found');
+                }
+                attachNeighborhoodListeners();
+            })
+            .catch(err => {
+                showError(startNeighborhoodMenu, 'Failed to load neighborhoods');
+                showError(endNeighborhoodMenu, 'Failed to load neighborhoods');
+            });
+    }
+
+    function attachNeighborhoodListeners() {
+        // Start Neighborhood
+        if (startNeighborhoodMenu && startNeighborhoodSelected) {
+            startNeighborhoodMenu.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+                cb.addEventListener('change', updateStartNeighborhoodText);
+                cb.addEventListener('click', function() { setTimeout(updateStartNeighborhoodText, 10); });
+            });
+            updateStartNeighborhoodText();
+        }
+        // End Neighborhood
+        if (endNeighborhoodMenu && endNeighborhoodSelected) {
+            endNeighborhoodMenu.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+                cb.addEventListener('change', updateEndNeighborhoodText);
+                cb.addEventListener('click', function() { setTimeout(updateEndNeighborhoodText, 10); });
+            });
+            updateEndNeighborhoodText();
+        }
+    }
+
+    function updateStartNeighborhoodText() {
+        var checked = startNeighborhoodMenu.querySelectorAll('input[type="checkbox"]:checked');
+        var names = Array.from(checked).map(function(cb) {
+            return cb.closest('label').querySelector('span').textContent.trim();
+        });
+        startNeighborhoodSelected.textContent = names.length > 0 ? names.join(', ') : 'Select Start Point';
+    }
+    function updateEndNeighborhoodText() {
+        var checked = endNeighborhoodMenu.querySelectorAll('input[type="checkbox"]:checked');
+        var names = Array.from(checked).map(function(cb) {
+            return cb.closest('label').querySelector('span').textContent.trim();
+        });
+        endNeighborhoodSelected.textContent = names.length > 0 ? names.join(', ') : 'Select End Point';
+    }
+
+    if (citySelect) {
+        citySelect.addEventListener('change', function() {
+            updateNeighborhoods(this.value);
+        });
+        if (citySelect.value) {
+            updateNeighborhoods(citySelect.value);
+        }
+    }
+});
+</script>
 {% endblock %}

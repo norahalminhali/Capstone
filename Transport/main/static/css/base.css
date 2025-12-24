@@ -1,3 +1,36 @@
+
+/* Always show alert messages above navbar */
+.alert-stack {
+    position: fixed;
+    top: 3.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 700px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+.alert-custom {
+    color: #fff !important;
+    font-size: 1.18rem;
+    padding: 1.1rem 1.5rem;
+    border-radius: 1.2rem;
+    font-weight: 600;
+    box-shadow: 0 4px 24px 0 rgba(44,62,80,0.13), 0 1.5px 6px 0 rgba(44,62,80,0.08);
+    letter-spacing: 0.02em;
+    text-align: center;
+    min-width: 340px;
+    max-width: 98vw;
+    width: 100%;
+    line-height: 1.7;
+}
+.alert-stack .alert-custom {
+    margin: 0.5rem 0;
+    pointer-events: auto;
+}
 /* Page transition animation for main content */
 
 
@@ -111,6 +144,16 @@ body.page-loaded {
     opacity: 0;
     transition: transform 0.6s cubic-bezier(.4,0,.2,1), opacity 0.6s cubic-bezier(.4,0,.2,1);
     background: transparent;
+}
+
+.navbar-home {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: transparent !important;
+    box-shadow: none !important;
+    z-index: 1000;
 }
 
 /* Solid navbar for non-home pages */

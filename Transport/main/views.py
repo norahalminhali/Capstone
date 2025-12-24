@@ -30,7 +30,7 @@ from main.models import City
 def home_view(request:HttpRequest):
 
     new_rider_request_ads = RiderRequest.objects.all().order_by('-id')
-    rider_requests = new_rider_request_ads[:4]
+    rider_requests = new_rider_request_ads[:3]
 
     drivers_count = Driver.objects.count()
     trips_count = Trip.objects.count()

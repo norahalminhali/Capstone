@@ -41,7 +41,7 @@
 
 <body>
 
-    <header class="navbar{% if request.resolver_match.url_name != 'home_view' %} navbar-solid{% endif %}">
+    <header class="navbar{% if request.resolver_match.url_name != 'home_view' %} navbar-solid{% else %} navbar-home{% endif %}">
         <div class="nav-container">
             <div class="logo">
                 <a href="{% url 'main:home_view' %}"><h2>WESAL</h2></a>
@@ -105,12 +105,14 @@
 <main>
     <!-- Messages -->
     {% if messages %}
+        <div class="alert-stack">
         {% for message in messages %}
             <div class="alert-custom alert-{{ message.tags }}-custom">
                 <i class="fa-solid fa-circle-exclamation"></i>
                 <span>{{ message }}</span>
             </div>
         {% endfor %}
+        </div>
     {% endif %}    
     {% block content %}
     {% endblock %}
@@ -129,15 +131,15 @@
             <p class="footer-description" style="font-size:2.1rem; font-family:'EB Garamond', serif; font-style:italic; margin-bottom:10px;" id="lets-talk">Let's Talk..</p>
             <div class="footer-icons" style="justify-content:flex-start; margin-bottom:10px;">
 
-                <a href="#" title="Email" style="margin-left:18px;"><i class="fa-solid fa-envelope fa-lg"></i></a>
-                <a href="#" title="X" style="margin-left:18px;"><i class="fa-brands fa-x-twitter fa-lg"></i></a>
+                <a href="mailto:Wesal4kSA@gmail.com" title="Email" style="margin-left:18px;"><i class="fa-solid fa-envelope fa-lg"></i></a>
+                <a href="https://x.com/wesal4ksa?s=11" title="X" style="margin-left:18px;"><i class="fa-brands fa-x-twitter fa-lg"></i></a>
             </div>
         </div>
 
         <div class="footer-col">
             <p class="footer-topic">Contact</p>
-            <p class="footer-link ">Email</p>
-            <p class="footer-link">X</p>
+            <p class="footer-link "><a href="mailto:Wesal4kSA@gmail.com" style="color:inherit;text-decoration:none;">Email</a></p>
+            <p class="footer-link"><a href="https://x.com/wesal4ksa?s=11" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">X</a></p>
         </div>
 
         <div class="footer-col">

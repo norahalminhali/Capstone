@@ -8,6 +8,7 @@
         background: linear-gradient(135deg, #0a234233 0%, #27447253 100%);
         position: relative;
         min-height: 100vh;
+        overflow-x: hidden;
     }
     .decorative-circle {
         position: absolute;
@@ -104,6 +105,50 @@
     span i {
         margin-right: 10px;
     }
+
+    @media (max-width: 991px) {
+        .col-md-6.col-lg-4 {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+        .card {
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+    @media (max-width: 767px) {
+        .col-md-6.col-lg-4 {
+            flex: 0 0 100%;
+            max-width: 100%;
+           
+        }
+        .card {
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1.5rem;
+        }
+        .d-flex.justify-content-between.align-items-center.mb-5 {
+            flex-direction: column;
+            gap: 1.5rem;
+            text-align: center;
+        }
+    }
+    .card {
+        border-radius: 18px !important;
+    }
+    .btn-outline-primary.rounded-pill {
+    border-color: #274472 !important;
+    color: #274472 !important;
+    background: #f6f8ff !important;
+    transition: color 0.2s, background 0.2s;
+}
+.btn-outline-primary.rounded-pill:hover, .btn-outline-primary.rounded-pill:focus {
+    background: #274472 !important;
+    color: #fff !important;
+    border-color: #274472 !important;
+}
 </style>
 
 {% endblock %}
@@ -112,7 +157,6 @@
 {% block content %}
 <!-- Decorative Circles -->
 <div class="decorative-circle circle-1"></div>
-<div class="decorative-circle circle-2"></div>
 <div class="decorative-circle circle-3"></div>
 <div class="decorative-circle circle-4"></div>
 <div class="decorative-circle circle-5"></div>

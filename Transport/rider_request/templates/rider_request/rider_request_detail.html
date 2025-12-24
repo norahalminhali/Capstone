@@ -5,8 +5,8 @@
 <style>
 
     body {
-        background: linear-gradient(135deg, #f8f7f5 0%, #f8e7c57d 90%);
-        color: #474341;
+        background: linear-gradient(135deg, #e9eefb 0%, #e0e7fb 90%);
+        color: #232b4d;
         min-height: 100vh;
     }
 
@@ -21,8 +21,8 @@
         padding: 25px; 
         border-radius: 18px;
         border: none;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-        background: #f8f7f5;
+        box-shadow: 0 10px 20px rgba(26,35,126,0.06);
+        background: #f6f8ff;
         height: 100%;
     }
 
@@ -34,33 +34,33 @@
 
     .section-title {
         font-weight: 600;
-        color: #474341;
-        border-bottom: 2px solid #f2c235;
+        color: #1a237e;
+        border-bottom: 2px solid #3949ab;
         padding-bottom: 8px;
         margin-bottom: 20px;
     }
 
     .info-text {
-        color: #666;
+        color: #3949ab;
         margin-bottom: 12px;
         display: flex;
         flex-wrap: wrap; 
     }
 
     .info-text strong {
-        color: #474341;
+        color: #1a237e;
         min-width: 100px; 
         margin-right: 10px;
     }
 
     .price {
-        color: #f2c235;
+        color: #3949ab;
         font-weight: 700;
         font-size: 1.2rem;
     }
 
     .avatar {
-        border: 3px solid #f2c235;
+        border: 3px solid #3949ab;
         object-fit: cover;
     }
 
@@ -69,6 +69,25 @@
         margin: 2px;
         font-weight: 500;
     }
+    /* summary chips */
+    .summary-chips{
+        display:flex;
+        flex-wrap:wrap;
+        gap:.5rem;
+        margin-top:.6rem;
+        align-items:center;
+    }
+    .chip{
+        background: #fff;
+        border: 1px solid #dfe6fb;
+        color: #1a237e;
+        padding: .45rem .7rem;
+        border-radius: 999px;
+        font-size: .95rem;
+        box-shadow: 0 2px 8px rgba(26,35,126,0.04);
+    }
+    .summary-left{flex:1 1 auto}
+    .summary-right{white-space:nowrap}
 </style>
 {% endblock %}
 
@@ -90,7 +109,7 @@
 
                     <div class="d-flex flex-wrap gap-2 mb-2 mb-md-0">
                         {% if rider_request.rider.user == request.user %}
-                            <a href="{% url 'rider_request:update_rider_request' rider_request.id %}" class="btn btn-sm btn-outline-warning fw-bold">
+                            <a href="{% url 'rider_request:update_rider_request' rider_request.id %}" class="btn btn-sm btn-outline-primary fw-bold">
                                 <i class="fa-solid fa-pen"></i> Edit
                             </a>
                             <a href="{% url 'rider_request:delete_rider_request' rider_request.id %}" class="btn btn-sm btn-outline-danger fw-bold">
@@ -108,7 +127,7 @@
                         {% elif request.user.is_authenticated and request.user.rider %}
                             
                             {% if not has_joined %}
-                                <a href="{% url 'rider_request:join_trip' rider_request.id %}" class="btn btn-sm btn-outline-warning fw-bold">
+                                <a href="{% url 'rider_request:join_trip' rider_request.id %}" class="btn btn-sm btn-outline-primary fw-bold">
                                     <i class="fa-solid fa-plus me-1"></i> Join Trip
                                 </a>
                             {% else %}
@@ -120,7 +139,7 @@
                                     {% elif user_status == 'Rejected' %}
                                         <span class="badge bg-danger-subtle text-danger border border-danger px-3">Rejected</span>
                                     {% else %}
-                                        <span class="badge bg-warning-subtle text-warning border border-warning px-3">Pending</span>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary px-3">Pending</span>
                                     {% endif %}
                                 </div>
                             {% endif %}
@@ -141,7 +160,7 @@
                         <strong>From:</strong>
                         <span class="d-flex flex-wrap gap-1">
                             {% for n in rider_request.start_neighborhood.all %}
-                                <span class="badge bg-warning-subtle text-warning border border-warning">{{ n.name }}</span>
+                                <span class="badge bg-primary-subtle text-primary border border-primary">{{ n.name }}</span>
                             {% endfor %}
                         </span>
                     </p>
@@ -150,7 +169,7 @@
                         <strong>To:</strong>
                         <span class="d-flex flex-wrap gap-1">
                             {% for n in rider_request.end_neighborhood.all %}
-                                <span class="badge bg-warning-subtle text-warning border border-warning">{{ n.name }}</span>
+                                <span class="badge bg-primary-subtle text-primary border border-primary">{{ n.name }}</span>
                             {% endfor %}
                         </span>
                     </p>
@@ -159,7 +178,7 @@
                         <strong>Days:</strong>
                         <span class="d-flex flex-wrap gap-1">
                             {% for day in rider_request.days_of_week.all %}
-                                <span class="badge bg-light text-dark border">{{ day.name }}</span>
+                                <span class="badge bg-info-subtle text-primary border border-info">{{ day.name }}</span>
                             {% endfor %}
                         </span>
                     </p>
@@ -177,7 +196,7 @@
 
                     <p class="info-text">
                         <strong>Remaining Seats:</strong> 
-                        <span class="badge {% if remaining_seats > 0 %}bg-info-subtle text-info{% else %}bg-danger-subtle text-danger{% endif %} border px-3">
+                        <span class="badge {% if remaining_seats > 0 %}bg-primary-subtle text-primary border border-primary{% else %}bg-danger-subtle text-danger border border-danger{% endif %} px-3">
                             {{ remaining_seats }} / {{ rider_request.total_riders }}
                         </span>
                     </p>
@@ -296,7 +315,7 @@
                                     {% elif r.rider_status == 'REJECTED' %}
                                         <span class="badge bg-danger-subtle text-danger border border-danger px-3">Rejected</span>
                                     {% else %}
-                                        <span class="badge bg-warning-subtle text-warning border border-warning px-3">Pending</span>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary px-3">Pending</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-center">
@@ -330,6 +349,224 @@
 </div> 
 
 
+<style>
+@media (max-width: 600px) {
+  .days-row-flex {
+    gap: 0.2rem !important;
+  }
+  .days-row-flex label {
+    letter-spacing: 1.5px !important;
+    font-size: .75em !important;
+    margin-top: 2px !important;
+    margin-right: 8px !important;
+    margin-left: 8px !important;
+  }
+  .days-row-flex .form-check {
+    min-width: 40px !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
+.dropdown-menu {
+    z-index: 1050;
+    position: absolute !important;
+    will-change: transform;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.chocie-form { position: relative; }
+
+</style>
+
+
+<script>
+// Ensure dropdown stays within viewport and show selected neighborhoods
+document.addEventListener('DOMContentLoaded', function() {
+    var dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(function(dropdown) {
+        var button = dropdown.querySelector('button[data-bs-toggle="dropdown"]');
+        var menu = dropdown.querySelector('.dropdown-menu');
+        if (button && menu) {
+            button.addEventListener('click', function() {
+                setTimeout(function() {
+                    var rect = menu.getBoundingClientRect();
+                    var overflowBottom = rect.bottom - window.innerHeight;
+                    if (overflowBottom > 0) {
+                        menu.style.top = 'auto';
+                        menu.style.bottom = '0';
+                        menu.style.maxHeight = (window.innerHeight - rect.top - 20) + 'px';
+                        menu.style.overflowY = 'auto';
+                    } else {
+                        menu.style.maxHeight = '260px';
+                        menu.style.overflowY = 'auto';
+                        menu.style.bottom = '';
+                    }
+                }, 100);
+            });
+        }
+    });
+
+    // Show selected End Neighborhoods in the button
+    var endNeighborhoodMenu = document.querySelector('.dropdown-menu.w-100.p-2');
+    var endNeighborhoodBtn = document.getElementById('endNeighborhoodDropdownBtn');
+    var endNeighborhoodSelected = document.getElementById('endNeighborhoodSelected');
+    if (endNeighborhoodMenu && endNeighborhoodBtn && endNeighborhoodSelected) {
+        endNeighborhoodMenu.addEventListener('change', function(e) {
+            updateEndNeighborhoodText();
+        });
+        endNeighborhoodMenu.addEventListener('click', function(e) {
+            if (e.target && e.target.matches('input[type="checkbox"]')) {
+                setTimeout(updateEndNeighborhoodText, 10);
+            }
+        });
+        function updateEndNeighborhoodText() {
+            var checked = endNeighborhoodMenu.querySelectorAll('input[type="checkbox"]:checked');
+            var names = Array.from(checked).map(function(cb) {
+                return cb.closest('label').querySelector('span').textContent.trim();
+            });
+            if (names.length > 0) {
+                endNeighborhoodSelected.textContent = names.join(', ');
+            } else {
+                endNeighborhoodSelected.textContent = 'End Neighborhood';
+            }
+        }
+        // Initialize on load
+        updateEndNeighborhoodText();
+    }
+
+    // Show selected Start Neighborhoods in the button
+    var startNeighborhoodMenu = document.getElementById('startNeighborhoodMenu');
+    var startNeighborhoodBtn = document.getElementById('startNeighborhoodDropdownBtn');
+    var startNeighborhoodSelected = document.getElementById('startNeighborhoodSelected');
+    if (startNeighborhoodMenu && startNeighborhoodBtn && startNeighborhoodSelected) {
+        startNeighborhoodMenu.addEventListener('change', function(e) {
+            updateStartNeighborhoodText();
+        });
+        startNeighborhoodMenu.addEventListener('click', function(e) {
+            if (e.target && e.target.matches('input[type="checkbox"]')) {
+                setTimeout(updateStartNeighborhoodText, 10);
+            }
+        });
+        function updateStartNeighborhoodText() {
+            var checked = startNeighborhoodMenu.querySelectorAll('input[type="checkbox"]:checked');
+            var names = Array.from(checked).map(function(cb) {
+                return cb.closest('label').querySelector('span').textContent.trim();
+            });
+            if (names.length > 0) {
+                startNeighborhoodSelected.textContent = names.join(', ');
+            } else {
+                startNeighborhoodSelected.textContent = 'Start Neighborhood';
+            }
+        }
+        // Initialize on load
+        updateStartNeighborhoodText();
+    }
+});
+</script>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const citySelect = document.querySelector('select[name="city"]');
+    const startNeighborhoodMenu = document.getElementById('startNeighborhoodMenu');
+    const startNeighborhoodSelected = document.getElementById('startNeighborhoodSelected');
+    const endNeighborhoodMenu = document.getElementById('endNeighborhoodMenu');
+    const endNeighborhoodSelected = document.getElementById('endNeighborhoodSelected');
+
+    function showLoading(menu) {
+        if (menu) menu.innerHTML = '<li class="text-center text-muted">جاري التحميل...</li>';
+    }
+    function showError(menu, msg) {
+        if (menu) menu.innerHTML = `<li class=\"text-danger text-center\">${msg}</li>`;
+    }
+
+    function updateNeighborhoods(cityId) {
+        showLoading(startNeighborhoodMenu);
+        showLoading(endNeighborhoodMenu);
+        fetch(`/rider_request/api/neighborhoods/?city_id=${cityId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                // Start Neighborhoods
+                startNeighborhoodMenu.innerHTML = '';
+                if (data.neighborhoods && data.neighborhoods.length > 0) {
+                    data.neighborhoods.forEach(function(n) {
+                        const li = document.createElement('li');
+                        li.className = 'mb-1';
+                        li.innerHTML = `<label class=\"d-flex align-items-center justify-content-between\"><span class=\"ms-2\">${n.name}</span><input class=\"form-check-input\" type=\"checkbox\" name=\"start_neighborhood\" value=\"${n.id}\" style=\"width:16px;height:16px;min-width:16px;min-height:16px;\"></label>`;
+                        startNeighborhoodMenu.appendChild(li);
+                    });
+                } else {
+                    showError(startNeighborhoodMenu, 'لا يوجد أحياء');
+                }
+                // End Neighborhoods
+                endNeighborhoodMenu.innerHTML = '';
+                if (data.neighborhoods && data.neighborhoods.length > 0) {
+                    data.neighborhoods.forEach(function(n) {
+                        const li = document.createElement('li');
+                        li.className = 'mb-1';
+                        li.innerHTML = `<label class=\"d-flex align-items-center justify-content-between\"><span class=\"ms-2\">${n.name}</span><input class=\"form-check-input\" type=\"checkbox\" name=\"end_neighborhood\" value=\"${n.id}\" style=\"width:16px;height:16px;min-width:16px;min-height:16px;\"></label>`;
+                        endNeighborhoodMenu.appendChild(li);
+                    });
+                } else {
+                    showError(endNeighborhoodMenu, 'No neighborhoods found');
+                }
+                attachNeighborhoodListeners();
+            })
+            .catch(err => {
+                showError(startNeighborhoodMenu, 'Failed to load neighborhoods');
+                showError(endNeighborhoodMenu, 'Failed to load neighborhoods');
+            });
+    }
+
+    function attachNeighborhoodListeners() {
+        // Start Neighborhood
+        if (startNeighborhoodMenu && startNeighborhoodSelected) {
+            startNeighborhoodMenu.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+                cb.addEventListener('change', updateStartNeighborhoodText);
+                cb.addEventListener('click', function() { setTimeout(updateStartNeighborhoodText, 10); });
+            });
+            updateStartNeighborhoodText();
+        }
+        // End Neighborhood
+        if (endNeighborhoodMenu && endNeighborhoodSelected) {
+            endNeighborhoodMenu.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+                cb.addEventListener('change', updateEndNeighborhoodText);
+                cb.addEventListener('click', function() { setTimeout(updateEndNeighborhoodText, 10); });
+            });
+            updateEndNeighborhoodText();
+        }
+    }
+
+    function updateStartNeighborhoodText() {
+        var checked = startNeighborhoodMenu.querySelectorAll('input[type="checkbox"]:checked');
+        var names = Array.from(checked).map(function(cb) {
+            return cb.closest('label').querySelector('span').textContent.trim();
+        });
+        startNeighborhoodSelected.textContent = names.length > 0 ? names.join(', ') : 'Start Neighborhood';
+    }
+    function updateEndNeighborhoodText() {
+        var checked = endNeighborhoodMenu.querySelectorAll('input[type="checkbox"]:checked');
+        var names = Array.from(checked).map(function(cb) {
+            return cb.closest('label').querySelector('span').textContent.trim();
+        });
+        endNeighborhoodSelected.textContent = names.length > 0 ? names.join(', ') : 'End Neighborhood';
+    }
+
+    if (citySelect) {
+        citySelect.addEventListener('change', function() {
+            updateNeighborhoods(this.value);
+        });
+        if (citySelect.value) {
+            updateNeighborhoods(citySelect.value);
+        }
+    }
+});
+</script>
 
 {% include "rider_request/component/comment_block.html" %}
 

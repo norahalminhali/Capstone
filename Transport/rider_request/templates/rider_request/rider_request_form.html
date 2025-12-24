@@ -7,6 +7,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-9 col-lg-7">
+
                 <div class="auth-card">
                     <div class="card-body p-4 p-md-5">
 
@@ -62,34 +63,54 @@
                                     {% endfor %}
                                 </select>
                             </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Start Neighborhood *</label>
-                                <select name="start_neighborhood" class="form-select" multiple required>
-                                    {% for n in neighborhoods %}
-                                    <option value="{{ n.id }}">{{ n.name }}</option>
-                                    {% endfor %}
-                                </select>
+                        <!--start -->
+                            <div class="mb-3 d-flex gap-3 flex-wrap">
+                                <div class="flex-fill" style="min-width:220px;">
+                                    <label class="form-label d-block text-end">Start Neighborhood *</label>
+                                    <div class="dropdown w-100 text-start chocie-form">
+                                        <button class="form-select w-100 text-end" type="button"
+                                            data-bs-toggle="dropdown" data-bs-auto-close="outside" id="startNeighborhoodDropdownBtn">
+                                            <span id="startNeighborhoodSelected">Start Neighborhood</span>
+                                        </button>
+                                        <ul class="dropdown-menu w-100 p-2 text-end" id="startNeighborhoodMenu">
+                                            <!-- JS will fill -->
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="flex-fill" style="min-width:220px;">
+                                    <label class="form-label d-block text-end">End Neighborhood *</label>
+                                    <div class="dropdown w-100 text-end chocie-form">
+                                        <button class="form-select w-100 text-end" type="button"
+                                            data-bs-toggle="dropdown" data-bs-auto-close="outside" id="endNeighborhoodDropdownBtn">
+                                            <span id="endNeighborhoodSelected">End Neighborhood</span>
+                                        </button>
+                                        <ul class="dropdown-menu w-100 p-2 text-end" id="endNeighborhoodMenu">
+                                            <!-- JS will fill -->
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="mb-4">
-                                <label class="form-label">End Neighborhood *</label>
-                                <select name="end_neighborhood" class="form-select" multiple required>
-                                    {% for n in neighborhoods %}
-                                    <option value="{{ n.id }}">{{ n.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                       
 
-                            <!-- Days -->
+                            <!-- Days as checkboxes in a styled box -->
                             <div class="mb-4">
                                 <label class="form-label">Days of Week *</label>
-                                <select name="days_of_week" class="form-select" multiple required>
-                                    {% for day in days %}
-                                    <option value="{{ day.id }}">{{ day.name }}</option>
-                                    {% endfor %}
-                                </select>
+                                <div style="background: #f6f8ff; border: 1.5px solid #dbe3fa; border-radius: 12px; padding: 0.7rem 1rem;">
+                                    <div class="d-flex flex-nowrap gap-2 align-items-center justify-content-center days-row-flex">
+                                        {% for day in days %}
+                                        <div class="form-check p-0 m-0 text-center" style="min-width: 60px;">
+                                            <input type="checkbox" name="days_of_week" id="day_{{ day.id }}" value="{{ day.id }}" style="width: 18px !important; height: 18px !important; min-width: 18px; min-height: 18px; margin-bottom: 2px; vertical-align: middle;">
+                                            <label class="form-check-label small d-block" for="day_{{ day.id }}" style="font-size: .92em; padding-left: 1px;">
+                                                {{ day.name|slice:":3" }}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <small class="text-muted">You can select more than one day</small>
                             </div>
+
 
                             <!-- Seats & Price -->
                             <div class="row mb-3">
@@ -115,4 +136,223 @@
     </div>
 </div>
 
+
+<style>
+@media (max-width: 600px) {
+  .days-row-flex {
+    gap: 0.2rem !important;
+  }
+  .days-row-flex label {
+    letter-spacing: 1.5px !important;
+    font-size: .75em !important;
+    margin-top: 2px !important;
+    margin-right: 8px !important;
+    margin-left: 8px !important;
+  }
+  .days-row-flex .form-check {
+    min-width: 40px !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
+.dropdown-menu {
+    z-index: 1050;
+    position: absolute !important;
+    will-change: transform;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.chocie-form { position: relative; }
+
+</style>
+
+
+<script>
+// Ensure dropdown stays within viewport and show selected neighborhoods
+document.addEventListener('DOMContentLoaded', function() {
+    var dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(function(dropdown) {
+        var button = dropdown.querySelector('button[data-bs-toggle="dropdown"]');
+        var menu = dropdown.querySelector('.dropdown-menu');
+        if (button && menu) {
+            button.addEventListener('click', function() {
+                setTimeout(function() {
+                    var rect = menu.getBoundingClientRect();
+                    var overflowBottom = rect.bottom - window.innerHeight;
+                    if (overflowBottom > 0) {
+                        menu.style.top = 'auto';
+                        menu.style.bottom = '0';
+                        menu.style.maxHeight = (window.innerHeight - rect.top - 20) + 'px';
+                        menu.style.overflowY = 'auto';
+                    } else {
+                        menu.style.maxHeight = '260px';
+                        menu.style.overflowY = 'auto';
+                        menu.style.bottom = '';
+                    }
+                }, 100);
+            });
+        }
+    });
+
+    // Show selected End Neighborhoods in the button
+    var endNeighborhoodMenu = document.querySelector('.dropdown-menu.w-100.p-2');
+    var endNeighborhoodBtn = document.getElementById('endNeighborhoodDropdownBtn');
+    var endNeighborhoodSelected = document.getElementById('endNeighborhoodSelected');
+    if (endNeighborhoodMenu && endNeighborhoodBtn && endNeighborhoodSelected) {
+        endNeighborhoodMenu.addEventListener('change', function(e) {
+            updateEndNeighborhoodText();
+        });
+        endNeighborhoodMenu.addEventListener('click', function(e) {
+            if (e.target && e.target.matches('input[type="checkbox"]')) {
+                setTimeout(updateEndNeighborhoodText, 10);
+            }
+        });
+        function updateEndNeighborhoodText() {
+            var checked = endNeighborhoodMenu.querySelectorAll('input[type="checkbox"]:checked');
+            var names = Array.from(checked).map(function(cb) {
+                return cb.closest('label').querySelector('span').textContent.trim();
+            });
+            if (names.length > 0) {
+                endNeighborhoodSelected.textContent = names.join(', ');
+            } else {
+                endNeighborhoodSelected.textContent = 'End Neighborhood';
+            }
+        }
+        // Initialize on load
+        updateEndNeighborhoodText();
+    }
+
+    // Show selected Start Neighborhoods in the button
+    var startNeighborhoodMenu = document.getElementById('startNeighborhoodMenu');
+    var startNeighborhoodBtn = document.getElementById('startNeighborhoodDropdownBtn');
+    var startNeighborhoodSelected = document.getElementById('startNeighborhoodSelected');
+    if (startNeighborhoodMenu && startNeighborhoodBtn && startNeighborhoodSelected) {
+        startNeighborhoodMenu.addEventListener('change', function(e) {
+            updateStartNeighborhoodText();
+        });
+        startNeighborhoodMenu.addEventListener('click', function(e) {
+            if (e.target && e.target.matches('input[type="checkbox"]')) {
+                setTimeout(updateStartNeighborhoodText, 10);
+            }
+        });
+        function updateStartNeighborhoodText() {
+            var checked = startNeighborhoodMenu.querySelectorAll('input[type="checkbox"]:checked');
+            var names = Array.from(checked).map(function(cb) {
+                return cb.closest('label').querySelector('span').textContent.trim();
+            });
+            if (names.length > 0) {
+                startNeighborhoodSelected.textContent = names.join(', ');
+            } else {
+                startNeighborhoodSelected.textContent = 'Start Neighborhood';
+            }
+        }
+        // Initialize on load
+        updateStartNeighborhoodText();
+    }
+});
+</script>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const citySelect = document.querySelector('select[name="city"]');
+    const startNeighborhoodMenu = document.getElementById('startNeighborhoodMenu');
+    const startNeighborhoodSelected = document.getElementById('startNeighborhoodSelected');
+    const endNeighborhoodMenu = document.getElementById('endNeighborhoodMenu');
+    const endNeighborhoodSelected = document.getElementById('endNeighborhoodSelected');
+
+    function showLoading(menu) {
+        if (menu) menu.innerHTML = '<li class="text-center text-muted">جاري التحميل...</li>';
+    }
+    function showError(menu, msg) {
+        if (menu) menu.innerHTML = `<li class=\"text-danger text-center\">${msg}</li>`;
+    }
+
+    function updateNeighborhoods(cityId) {
+        showLoading(startNeighborhoodMenu);
+        showLoading(endNeighborhoodMenu);
+        fetch(`/rider_request/api/neighborhoods/?city_id=${cityId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                // Start Neighborhoods
+                startNeighborhoodMenu.innerHTML = '';
+                if (data.neighborhoods && data.neighborhoods.length > 0) {
+                    data.neighborhoods.forEach(function(n) {
+                        const li = document.createElement('li');
+                        li.className = 'mb-1';
+                        li.innerHTML = `<label class=\"d-flex align-items-center justify-content-between\"><span class=\"ms-2\">${n.name}</span><input class=\"form-check-input\" type=\"checkbox\" name=\"start_neighborhood\" value=\"${n.id}\" style=\"width:16px;height:16px;min-width:16px;min-height:16px;\"></label>`;
+                        startNeighborhoodMenu.appendChild(li);
+                    });
+                } else {
+                    showError(startNeighborhoodMenu, 'No neighborhoods found');
+                }
+                // End Neighborhoods
+                endNeighborhoodMenu.innerHTML = '';
+                if (data.neighborhoods && data.neighborhoods.length > 0) {
+                    data.neighborhoods.forEach(function(n) {
+                        const li = document.createElement('li');
+                        li.className = 'mb-1';
+                        li.innerHTML = `<label class=\"d-flex align-items-center justify-content-between\"><span class=\"ms-2\">${n.name}</span><input class=\"form-check-input\" type=\"checkbox\" name=\"end_neighborhood\" value=\"${n.id}\" style=\"width:16px;height:16px;min-width:16px;min-height:16px;\"></label>`;
+                        endNeighborhoodMenu.appendChild(li);
+                    });
+                } else {
+                    showError(endNeighborhoodMenu, 'No neighborhoods found');
+                }
+                attachNeighborhoodListeners();
+            })
+            .catch(err => {
+                showError(startNeighborhoodMenu, 'Failed to load neighborhoods');
+                showError(endNeighborhoodMenu, 'Failed to load neighborhoods');
+            });
+    }
+
+    function attachNeighborhoodListeners() {
+        // Start Neighborhood
+        if (startNeighborhoodMenu && startNeighborhoodSelected) {
+            startNeighborhoodMenu.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+                cb.addEventListener('change', updateStartNeighborhoodText);
+                cb.addEventListener('click', function() { setTimeout(updateStartNeighborhoodText, 10); });
+            });
+            updateStartNeighborhoodText();
+        }
+        // End Neighborhood
+        if (endNeighborhoodMenu && endNeighborhoodSelected) {
+            endNeighborhoodMenu.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+                cb.addEventListener('change', updateEndNeighborhoodText);
+                cb.addEventListener('click', function() { setTimeout(updateEndNeighborhoodText, 10); });
+            });
+            updateEndNeighborhoodText();
+        }
+    }
+
+    function updateStartNeighborhoodText() {
+        var checked = startNeighborhoodMenu.querySelectorAll('input[type="checkbox"]:checked');
+        var names = Array.from(checked).map(function(cb) {
+            return cb.closest('label').querySelector('span').textContent.trim();
+        });
+        startNeighborhoodSelected.textContent = names.length > 0 ? names.join(', ') : 'Select Start Point';
+    }
+    function updateEndNeighborhoodText() {
+        var checked = endNeighborhoodMenu.querySelectorAll('input[type="checkbox"]:checked');
+        var names = Array.from(checked).map(function(cb) {
+            return cb.closest('label').querySelector('span').textContent.trim();
+        });
+        endNeighborhoodSelected.textContent = names.length > 0 ? names.join(', ') : 'Select End Point';
+    }
+
+    if (citySelect) {
+        citySelect.addEventListener('change', function() {
+            updateNeighborhoods(this.value);
+        });
+        if (citySelect.value) {
+            updateNeighborhoods(citySelect.value);
+        }
+    }
+});
+</script>
 {% endblock %}
