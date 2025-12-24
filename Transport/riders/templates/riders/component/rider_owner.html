@@ -4,26 +4,21 @@
             <div class="row g-4">
                 <!-- Sidebar -->
                 <div class="col-lg-4">
-                    <div class="tp-sidebar d-flex flex-column align-items-center justify-content-center"
-                        style="text-align:center; background: #f8f9fa; border-radius: 18px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); padding: 32px 18px 28px 18px; min-height: 480px;">
+                    <div class="tp-sidebar d-flex flex-column align-items-center justify-content-center" style="text-align:center; background: linear-gradient(135deg, #e3e8f7 0%, #c5cae9 100%); border-radius: 18px; box-shadow: 0 2px 16px #3949ab22; padding: 32px 18px 28px 18px; min-height: 480px;">
 
-                        <div class="tp-avatar mb-3"
-                            style="box-shadow: 0 4px 18px rgba(0,0,0,0.10); border-radius: 50%; background: #fff; padding: 8px; margin-bottom: 18px;">
+                        <div class="tp-avatar mb-3" style="box-shadow: 0 4px 18px #3949ab22; border-radius: 50%; background: #e3e8f7; padding: 8px; margin-bottom: 18px;">
                             {% if rider.avatar and rider.avatar.url != '/media/images/avatars/avatar.webp' %}
-                            <img src="{{ rider.avatar.url }}" alt="Rider Avatar"
-                                style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #f2c235;">
+                                <img src="{{ rider.avatar.url }}" alt="Rider Avatar" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #3949ab;">
                             {% else %}
-                            <i class="fa-solid fa-user fa-4x text-muted" style="margin-bottom: 10px;"></i>
+                                <i class="fa-solid fa-user fa-4x text-muted" style="margin-bottom: 10px;"></i>
                             {% endif %}
                         </div>
 
-
-                        <div class="tp-name"
-                            style="font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; color: #474341; letter-spacing: 0.5px;">
+                        <div class="tp-name" style="font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; color: #1a237e; letter-spacing: 0.5px;">
                             {{ rider.user.first_name }} {{ rider.user.last_name }}
                         </div>
 
-                        <div class="tp-username" style="font-size: 1.08rem; color: #7c7c7c; margin-bottom: 10px;">
+                        <div class="tp-username" style="font-size: 1.08rem; color: #3949ab; margin-bottom: 10px;">
                             @{{ rider.user.username }}
                         </div>
                         <!----- RATING ----->
@@ -44,25 +39,18 @@
                         <!--ِENDRATING-->
                         <div class="tp-info-list w-100" style="font-size: 1.13rem; margin-bottom: 18px;">
                             {% if rider.phone %}
-                            <div class="mb-2"
-                                style="background: #fffbe6; border-radius: 8px; padding: 7px 0; color: #b48a00;"><i
-                                    class="fa-solid fa-phone me-1"></i> {{ driver.phone }}</div>
+                                <div class="mb-2" style="background: #e3e8f7; border-radius: 8px; padding: 7px 0; color: #1a237e;"><i class="fa-solid fa-phone me-1"></i> {{ rider.phone }}</div>
                             {% endif %}
                             {% if rider.gender %}
-                            <div class="mb-2"
-                                style="background: #eaf6ff; border-radius: 8px; padding: 7px 0; color: #302e22a3;"><i
-                                    class="fa-solid fa-venus-mars me-1"></i> {{ driver.get_gender_display }}</div>
+                                <div class="mb-2" style="background: #c5cae9; border-radius: 8px; padding: 7px 0; color: #3949ab;"><i class="fa-solid fa-venus-mars me-1"></i> {{ rider.get_gender_display }}</div>
                             {% endif %}
                         </div>
 
-                        <div class="tp-email mb-2"
-                            style="font-size: 1.13rem; background: #f3f3f3; border-radius: 8px; padding: 7px 0; margin-bottom: 18px;">
+                        <div class="tp-email mb-2" style="font-size: 1.13rem; background: #e3e8f7; border-radius: 8px; padding: 7px 0; margin-bottom: 18px;">
                             {% if rider.user.email %}
-                            <a href="mailto:{{ rider.user.email }}" target="_blank"
-                                style="color: #474341; text-decoration: underline;">
-                                <i class="fa-solid fa-envelope me-1" style="color:#f2c235;"></i> - {{ rider.user.email
-                                }}
-                            </a>
+                                <a href="mailto:{{ rider.user.email }}" target="_blank" style="color: #1a237e; text-decoration: underline;">
+                                    <i class="fa-solid fa-envelope me-1" style="color:#3949ab;"></i> - {{ rider.user.email }}
+                                </a>
                             {% endif %}
                         </div>
                     </div>
@@ -70,16 +58,29 @@
 
                 <!-- Main Content -->
                 <div class="col-lg-8">
-
                     <div class="tp-header">
                         <div>
+                     <!--   {% if has_rejected %}
+                            <div class="alert alert-warning alert-dismissible fade show d-flex align-items-center" 
+                                role="alert" 
+                                style="border-radius: 15px; border: none; background-color: #fff8e1; border-left: 5px solid #ffc107; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1rem 1.5rem; margin-bottom: 20px;">
+                                
+                                <i class="fa-solid fa-triangle-exclamation me-3" style="font-size: 1.3rem; color: #ffc107;"></i>
+                                
+                                <div style="color: #856404;">
+                                    <strong>Trip Update:</strong> You have one or more rejected requests. Please check the "Joined Trips" tab for details.
+                                </div>
+                                
+                                <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %} -->
                             <div class="tp-header-title">
                                 Rider Profile
                             </div>
                         </div>
                         <div>
                             <a href="{% url 'accounts:edit_rider_profile' %}" class="btn btn-sm"
-                                style="background: linear-gradient(135deg, #f2c235 0%, #f8d66d 100%); color: #474341; border: none; padding: 6px 14px; font-size: 0.85rem; border-radius: 20px; font-weight: 500;">
+                                style="background: linear-gradient(135deg, #3949ab 0%, #1a237e 100%); color: #fefefe; border: none; padding: 6px 14px; font-size: 0.85rem; border-radius: 20px; font-weight: 500;">
                                 <i class="fa-solid fa-pen" style="font-size: 0.8rem;"></i> Edit Profile
                             </a>
                         </div>
