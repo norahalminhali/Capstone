@@ -71,6 +71,9 @@
                                     <li><a href="{% url 'accounts:profile_driver' user.driver.id %}" class="dropdown-link"><i class="fa-solid fa-user"></i> Profile</a></li>
                                 {% elif user.rider %}
                                     <li><a href="{% url 'accounts:profile_rider' user.rider.id %}" class="dropdown-link"><i class="fa-solid fa-user"></i> Profile</a></li>
+                                {% elif user.is_superuser %}
+                                    <li><a href="{% url 'main:manager_view' %}" class="dropdown-link"><i class="fa-solid fa-user-tie"></i> Dashboard</a></li>
+                                    <li><a href="{% url 'main:contact_message_view' %}" class="dropdown-link"><i class="fa-solid fa-comments"></i> Messages </a></li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
@@ -118,7 +121,7 @@
     {% endblock %}
 </main>
 
-<footer class="footer-box w-100">
+<footer class="footer-box  mt-auto w-100">
     <!-- Decorative bubbles -->
     <div class="footer-bubble b1"></div>
     <div class="footer-bubble b2"></div>
@@ -150,8 +153,13 @@
 
         <div class="footer-col">
             <p class="footer-topic">Legal</p>
-            <p class="footer-link">Terms & Conditions</p>
-            <p class="footer-link">Privacy Policy</p>
+           <a href="{% url 'main:terms' %}" class="footer-link">
+    Terms & Conditions
+</a>
+
+<a href="{% url 'main:privacy' %}" class="footer-link">
+    Privacy Policy
+</a>
     </div>
 </footer>
 

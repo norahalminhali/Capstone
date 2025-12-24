@@ -144,15 +144,16 @@
                 <div class="d-flex gap-4 flex-wrap">
 
                     {% for sub in subscribers %}
+                    <a href="{%url 'accounts:profile_rider' sub.rider.id%}" class="text-decoration-none text-dark">
                     <div class="text-center me-3">
                         <img src="{{ sub.rider.avatar.url }}" class="rounded-circle shadow-sm" width="70" height="70"
                             style="object-fit: cover;">
 
                         <div class="mt-2 fw-semibold">
-                            {{ sub.rider.user.first_name }}
-                            {{ sub.rider.user.last_name }}
+                            {{ sub.rider.user.username }}
                         </div>
                     </div>
+                    </a>
                     {% empty %}
                     <p class="text-muted">No riders have joined yet.</p>
                     {% endfor %}

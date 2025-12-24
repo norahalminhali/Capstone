@@ -14,7 +14,8 @@
     pointer-events: none;
 }
 .alert-custom {
-    color: #fff !important;
+    color: rgba(44, 62, 80, 0)!important;
+    background: #fff ;
     font-size: 1.18rem;
     padding: 1.1rem 1.5rem;
     border-radius: 1.2rem;
