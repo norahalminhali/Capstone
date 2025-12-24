@@ -153,7 +153,7 @@
             <i class="fa-solid fa-filter"></i>
         </button>
         {% if request.user.is_authenticated and request.user.driver%}
-        <a href="{% url 'trips:create_trip_view' %}" class="btn me-3" style="background: #2c3767;">
+        <a href="{% url 'trips:create_trip_view' %}" class="btn me-3 border-primary">
             + Create Trip
         </a>
         {%endif%}
