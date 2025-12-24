@@ -9,13 +9,16 @@ from django.contrib import messages
 from drivers.forms import DriverForm
 from riders.forms import RiderForm
 from drivers.models import Car, CarCompany
+from rider_request.models import JoinRequestTrip, RiderRequest
 from main.models import City, Nationality
 from trips.models import Trip, JoinTrip
+from rider_request.models import RiderRequest
 from django.contrib.auth.decorators import login_required
 from django.db import transaction  
 from django.utils.http import url_has_allowed_host_and_scheme  
 from django.contrib import messages
 
+from datetime import date
 from django.db.models import Count, Q
 
 
@@ -258,7 +261,9 @@ def profile_driver(request: HttpRequest, driver_id=None):
         filter=Q(jointrip__rider_status='APPROVED')
     )
     ).order_by('-created_at')
-    return render(request, 'accounts/profile_driver.html', {'driver': driver, 'car': car, 'trips': trips,'subscriptions':subscriptions})
+
+    accepted_rider_req = RiderRequest.objects.filter(driver=driver, status=RiderRequest.Status.A)
+    return render(request, 'accounts/profile_driver.html', {'driver': driver, 'car': car, 'trips': trips,'subscriptions':subscriptions, 'accepted_rider_req':accepted_rider_req})
 
 
 @login_required
@@ -307,15 +312,35 @@ def profile_rider(request: HttpRequest, rider_id=None):
             rider=rider
         ).order_by('-created_at')
     
+    req_trips = JoinRequestTrip.objects.select_related(
+        'rider_request',
+        'rider_request__driver',
+        'rider_request__city'
+    ).filter(rider=rider).order_by('-rider_request__start_date')
+    
     subscriptions = TripSubscription.objects.filter(
             rider=rider
         ).values_list('join_trip_id', flat=True)
-    
-    
+    req_subscriptions = TripSubscription.objects.filter(
+        rider=rider
+        ).values_list('join_request_trip_id', flat=True)
+
+    for jt in req_trips:
+        rr = jt.rider_request
+        if rr.status == RiderRequest.Status.A and rr.end_date <= date.today() and jt.id not in subscriptions:
+            jt.display_status = 'Accepted'
+            jt.show_payment_button = True
+        else:
+            jt.display_status = jt.get_rider_status_display()
+            jt.show_payment_button = False
+
     has_rejected = joined_trips.filter(rider_status='REJECTED').exists()
     if has_rejected:
         messages.warning(request, "Attention: You have rejected join requests. Please check the details in your joined trips list.")
-    return render(request, 'accounts/profile_rider.html', {'rider': rider,'has_rejected':has_rejected, 'subscriptions':subscriptions, 'joined_trips':joined_trips})
+    
+
+    context = {'rider': rider,'joined_trips':joined_trips,'has_rejected':has_rejected, 'subscriptions':subscriptions, 'joined_trips':joined_trips,'req_trips':req_trips ,'req_subscriptions':req_subscriptions}
+    return render(request, 'accounts/profile_rider.html', context)
 
 @login_required
 def edit_rider_profile(request: HttpRequest):
