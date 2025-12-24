@@ -13,4 +13,6 @@ urlpatterns=[
     path('profile/driver/<int:driver_id>', views.profile_driver, name='profile_driver'),
     path('profile/rider/edit/', views.edit_rider_profile, name='edit_rider_profile'),
     path('profile/rider/<int:rider_id>', views.profile_rider, name='profile_rider'),
+    path('profile/driver/rate-rider/', views.submit_rider_review, name='submit_rider_review'),
+    path('profile/rider/rate-driver/', views.submit_driver_review, name='submit_driver_review'),
 ]

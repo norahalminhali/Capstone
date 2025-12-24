@@ -22,7 +22,7 @@
                             @{{ rider.user.username }}
                         </div>
                         <!----- RATING ----->
-                        <div class="tp-rating mb-3" style="font-size: 1.15rem; color: #f2c235;">
+                        <!--<div class="tp-rating mb-3" style="font-size: 1.15rem; color: #f2c235;">
                             {% if rider.rating %}
                             {% for i in "12345" %}
                             {% if forloop.counter <= rider.rating %} <i class="fa-solid fa-star"></i>
@@ -35,6 +35,25 @@
                                 {% else %}
                                 <span style="color: #aaa;">No rating</span>
                                 {% endif %}
+                        </div>-->
+                        <div class="tp-rating mb-3" style="font-size: 1.15rem; color: #f2c235; display: flex; align-items: center; justify-content: center;">
+                            {% if average_rating %}
+                                <div class="stars-wrapper">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= average_rating %}
+                                            <i class="fa-solid fa-star"></i>
+                                        {% else %}
+                                            <i class="fa-regular fa-star text-muted opacity-50"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                
+                                <span style="color: #474341; font-size: 1.05rem; margin-left: 8px; font-weight: 600;">
+                                    {{ average_rating|floatformat:1 }}/5
+                                </span>
+                            {% else %}
+                                <span style="color: #aaa; font-size: 1rem; font-style: italic;">No rating</span>
+                            {% endif %}
                         </div>
                         <!--ِENDRATING-->
                         <div class="tp-info-list w-100" style="font-size: 1.13rem; margin-bottom: 18px;">
@@ -103,6 +122,12 @@
                         <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" href="#joined-trips">
                                 <i class="fa-solid fa-route me-1"></i> Joined Trips
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#rating">
+                                <i class="fa-solid fa-star-half-stroke"></i> Rating
                             </a>
                         </li>
                     </ul>
@@ -192,6 +217,131 @@
                         <!-- Joined Trips Tab -->
                         {% include "riders/component/trips_tab_profile.html" %}
 
+                        <!-- Rating Tap-->
+                        <div class="tab-pane fade" id="rating">
+                            
+                            <div class="mb-5">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="fw-bold mb-0">Rate Your Drivers</h5>
+                                    <span class="badge bg-success rounded-pill">{{ drivers_to_rate|length }} Pending</span>
+                                </div>
+
+                                <div class="table-responsive bg-white rounded shadow-sm border p-0">
+                                    <table class="table mb-0 align-middle">
+                                        <thead class="bg-light">
+                                            <tr class="small text-muted text-uppercase">
+                                                <th class="ps-4 py-3">Driver</th>
+                                                <th>Trip ID</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for join in drivers_to_rate %}
+                                            <tr class="border-bottom">
+                                                <td class="ps-4 py-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="{{ join.trip.driver.user.avatar.url }}" class="rounded-circle me-3 border" width="40" height="40" style="object-fit: cover;">
+                                                        <div>
+                                                            <h6 class="mb-0 fw-bold">{{ join.trip.driver.user.get_full_name }}</h6>
+                                                            <small class="text-muted">Driver</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><span class="badge bg-light text-dark border">#{{ join.trip.id }}</span></td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-sm btn-success rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#rateDriverModal{{ join.id }}">
+                                                        Rate Driver
+                                                    </button>
+                                                </td>
+                                            </tr>
+
+                                            <div class="modal fade" id="rateDriverModal{{ join.id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content border-0 shadow">
+                                                        <div class="modal-header bg-success text-white">
+                                                            <h5 class="modal-title fw-bold">Rate Your Experience</h5>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <form action="{% url 'accounts:submit_driver_review' %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <div class="modal-body p-4 text-center">
+                                                                <input type="hidden" name="trip_id" value="{{ join.trip.id }}">
+                                                                <input type="hidden" name="driver_id" value="{{ join.trip.driver.id }}">
+                                                                
+                                                                <p class="text-muted">How was the driver <strong>{{ join.trip.driver.user.first_name }}</strong> during Trip #{{ join.trip.id }}?</p>
+                                                                
+                                                                <div class="mb-3">
+                                                                    <select name="rating" class="form-select form-select-lg border-success-subtle" required>
+                                                                        <option value="" disabled selected>Select Stars</option>
+                                                                        <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+                                                                        <option value="4">⭐⭐⭐⭐ (Very Good)</option>
+                                                                        <option value="3">⭐⭐⭐ (Good)</option>
+                                                                        <option value="2">⭐⭐ (Fair)</option>
+                                                                        <option value="1">⭐ (Poor)</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="text-start">
+                                                                    <label class="form-label fw-bold small">Your Comments</label>
+                                                                    <textarea name="comments" class="form-control" rows="3" placeholder="Share your feedback..." required></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn btn-success rounded-pill px-5">Submit Review</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="3" class="text-center py-5 text-muted">
+                                                    <i class="fa-solid fa-clock-rotate-left fa-2x mb-2 opacity-25"></i>
+                                                    <p class="mb-0">No pending driver ratings.</p>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h5 class="fw-bold mb-4">Feedback From Drivers</h5>
+                                {% for review in received_reviews %}
+                                <div class="card mb-3 border-0 shadow-sm bg-light">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ review.driver.user.avatar.url }}" class="rounded-circle me-3" width="45" height="45" style="object-fit: cover;">
+                                                <div>
+                                                    <h6 class="mb-0 fw-bold">{{ review.driver.user.get_full_name }}</h6>
+                                                    <small class="text-muted">Trip #{{ review.trip.id }} • {{ review.created_at|date:"M d, Y" }}</small>
+                                                </div>
+                                            </div>
+                                            <div class="text-warning">
+                                                {% for i in "12345" %}
+                                                    {% if forloop.counter <= review.rating %}
+                                                        <i class="fa-solid fa-star"></i>
+                                                    {% else %}
+                                                        <i class="fa-regular fa-star"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <p class="mt-3 mb-0 text-secondary" style="font-style: italic;">
+                                            "{{ review.comments }}"
+                                        </p>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="text-center py-5 bg-white rounded border border-dashed">
+                                    <p class="text-muted mb-0">You haven't received any reviews yet.</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
                     </div>
 
                 </div>

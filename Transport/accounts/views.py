@@ -18,9 +18,11 @@ from django.db import transaction
 from django.utils.http import url_has_allowed_host_and_scheme  
 from django.contrib import messages
 from django.utils import timezone
+from riders.models import ReviewRider
+from drivers.models import ReviewDriver
 
 from datetime import date
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Avg
 
 
 #  Helper لتقليل التكرار 
@@ -258,6 +260,11 @@ def profile_driver(request: HttpRequest, driver_id=None):
         return render(request, '403.html', status=403)  
  
     car = driver.car if hasattr(driver, 'car') else None
+
+
+    received_reviews = ReviewDriver.objects.filter(driver=driver).select_related('rider__user', 'trip').order_by('-created_at')
+    #حساب_متوسط_التقييم_لعرضه_تحت_الاسم
+    average_rating = received_reviews.aggregate(Avg('rating'))['rating__avg'] or 0
     # جلب جميع الرحلات التي أنشأها السائق
     trips = driver.trips.all().order_by('-created_at')
 
@@ -271,10 +278,46 @@ def profile_driver(request: HttpRequest, driver_id=None):
     ).order_by('-created_at')
 
     accepted_rider_req = RiderRequest.objects.filter(driver=driver, status=RiderRequest.Status.A)
-    expired_trips_exists = driver.trips.filter(end_date__lt=timezone.now().date()).exists()
 
-    return render(request, 'accounts/profile_driver.html', {'driver': driver, 'car': car, 'trips': trips,'subscriptions':subscriptions, 'accepted_rider_req':accepted_rider_req, 'expired_trips_exists': expired_trips_exists})
 
+    today = timezone.now().date()
+    expired_trips_exists = driver.trips.filter(end_date__lt=today).exists()
+    passengers_to_rate = JoinTrip.objects.filter(trip__driver=driver,rider_status='APPROVED', end_date__lt=today).exclude(
+        rider__reviewrider__trip__driver=driver, rider__reviewrider__trip__in=driver.trips.all()).distinct()
+
+    return render(request, 'accounts/profile_driver.html', {'driver': driver, 'car': car, 'trips': trips,'subscriptions':subscriptions, 'accepted_rider_req':accepted_rider_req, 'expired_trips_exists': expired_trips_exists, 'passengers_to_rate': passengers_to_rate,'received_reviews': received_reviews,'average_rating': average_rating,})
+
+#لعملية_تقييم_السائق_للركاب_المنظمين_للرحلة
+@login_required
+def submit_rider_review(request):
+    if request.method == "POST":
+        trip_id = request.POST.get('trip_id')
+        rider_id = request.POST.get('rider_id')
+        rating = request.POST.get('rating')
+        comments = request.POST.get('comments')
+
+        try:
+            # Ensure the driver is the current user
+            driver = request.user.driver
+            # Validate that the trip belongs to this driver
+            trip = Trip.objects.get(id=trip_id, driver=driver)
+            rider = Rider.objects.get(id=rider_id)
+
+            # Create the review record
+            ReviewRider.objects.create(
+                trip=trip,
+                driver=driver,
+                rider=rider,
+                rating=rating,
+                comments=comments
+            )
+            messages.success(request, "Your rating for the rider has been submitted successfully!")
+            
+        except Exception as e:
+            # You can log 'e' for debugging if needed
+            messages.error(request, "An error occurred while saving the rating. Please try again.")
+            
+    return redirect('accounts:profile_driver', driver_id=driver.id)
 
 @login_required
 def edit_driver_profile(request: HttpRequest):
@@ -348,10 +391,54 @@ def profile_rider(request: HttpRequest, rider_id=None):
             jt.show_payment_button = False
 
     has_rejected = joined_trips.filter(rider_status='REJECTED').exists()
-  
+    
+    #rating actions
+    today = timezone.now().date()
+    received_reviews = ReviewRider.objects.filter(rider=rider).select_related('driver__user', 'trip').order_by('-created_at')
+    average_rating = received_reviews.aggregate(Avg('rating'))['rating__avg'] or 0
 
-    context = {'rider': rider,'joined_trips':joined_trips,'has_rejected':has_rejected, 'subscriptions':subscriptions, 'joined_trips':joined_trips,'req_trips':req_trips ,'req_subscriptions':req_subscriptions}
+    drivers_to_rate = JoinTrip.objects.filter(
+        rider=rider,
+        rider_status='APPROVED',
+        trip__end_date__lt=today
+    ).exclude(
+        trip__driver_reviews__rider=rider 
+    ).select_related('trip__driver__user')
+
+    context = {'rider': rider,'joined_trips':joined_trips,'has_rejected':has_rejected, 'subscriptions':subscriptions, 'joined_trips':joined_trips,'req_trips':req_trips ,'req_subscriptions':req_subscriptions, 'received_reviews': received_reviews,
+        'average_rating': average_rating,
+        'drivers_to_rate': drivers_to_rate}
     return render(request, 'accounts/profile_rider.html', context)
+
+#لعملية_تقييم__الراكب_للسائق
+@login_required
+def submit_driver_review(request):
+  
+    if request.method == "POST":
+        trip_id = request.POST.get('trip_id')
+        driver_id = request.POST.get('driver_id')
+        rating = request.POST.get('rating')
+        comments = request.POST.get('comments')
+        rider = request.user.rider 
+
+        try:
+           
+            ReviewDriver.objects.create(
+                trip_id=trip_id,
+                driver_id=driver_id,
+                rider=rider,
+                rating=rating,
+                comments=comments
+            )
+            messages.success(request, "Thank you! Your review for the driver has been submitted successfully.")
+            
+        except Exception as e:
+           
+            messages.error(request, "An error occurred while submitting your review. Please try again.")
+            print(f"Error: {e}")
+
+ 
+    return redirect('accounts:profile_rider', rider_id=rider.id)
 
 @login_required
 def edit_rider_profile(request: HttpRequest):

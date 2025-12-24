@@ -66,8 +66,22 @@ class Driver (models.Model):
 
 class ReviewDriver(models.Model):
 
+    class RatingChoices(models.IntegerChoices):
+        ONE = 1, '1 Star'
+        TWO = 2, '2 Stars'
+        THREE = 3, '3 Stars'
+        FOUR = 4, '4 Stars'
+        FIVE = 5, '5 Stars'
+
+    trip = models.ForeignKey('trips.Trip', on_delete=models.CASCADE, related_name="driver_reviews")
     rider = models.ForeignKey('riders.Rider', on_delete=models.CASCADE)
     driver = models.ForeignKey(Driver,on_delete=models.CASCADE)
-    rating = models.SmallIntegerField()
+    rating = models.SmallIntegerField(choices=RatingChoices.choices, default=RatingChoices.THREE)
     comments = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('trip', 'rider', 'driver')
+
+    def __str__(self):
+        return f"Rider {self.rider} rated Driver {self.driver} - Trip {self.trip.id}"

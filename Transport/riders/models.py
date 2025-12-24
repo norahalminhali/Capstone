@@ -41,9 +41,23 @@ class Rider (models.Model):
 
 class ReviewRider (models.Model):
 
+    class RatingChoices(models.IntegerChoices):
+        ONE = 1, '1 Star'
+        TWO = 2, '2 Stars'
+        THREE = 3, '3 Stars'
+        FOUR = 4, '4 Stars'
+        FIVE = 5, '5 Stars'
+
+    trip = models.ForeignKey('trips.Trip', on_delete=models.CASCADE, related_name="rider_reviews")
     rider = models.ForeignKey(Rider, on_delete=models.CASCADE)
     driver = models.ForeignKey(Driver,on_delete=models.CASCADE)
-    rating = models.SmallIntegerField()
-    comments = models.TextField()
-
+    rating = models.SmallIntegerField(choices=RatingChoices.choices, default=RatingChoices.THREE)
+    comments = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # لضمان عدم قيام السائق بتقييم نفس الراكب أكثر من مرة لنفس الرحلة
+    class Meta:
+        unique_together = ('trip', 'rider', 'driver')
+    
+    def __str__(self):
+        return f"Review by {self.driver} for {self.rider} - Trip {self.trip.id}"
