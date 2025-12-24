@@ -71,6 +71,9 @@
                                     <li><a href="{% url 'accounts:profile_driver' user.driver.id %}" class="dropdown-link"><i class="fa-solid fa-user"></i> Profile</a></li>
                                 {% elif user.rider %}
                                     <li><a href="{% url 'accounts:profile_rider' user.rider.id %}" class="dropdown-link"><i class="fa-solid fa-user"></i> Profile</a></li>
+                                {% elif user.is_superuser %}
+                                    <li><a href="{% url 'main:manager_view' %}" class="dropdown-link"><i class="fa-solid fa-user-tie"></i> Dashboard</a></li>
+                                    <li><a href="{% url 'main:contact_message_view' %}" class="dropdown-link"><i class="fa-solid fa-comments"></i> Messages </a></li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
